@@ -146,15 +146,15 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
 :root {
-  --primary-color: #8B5A2B; /* Rich brown */
-  --secondary-color: #B22222; /* Firebrick red */
-  --accent-color: #D4AF37; /* Gold */
-  --light-gold: #F5E8C7;
-  --bg-light: #F9F6F2;
-  --text-dark: #333333;
-  --text-medium: #555555;
-  --text-light: #777777;
-  --border-color: #E0D6C9;
+  --primary-color: #4A5568; /* Slate gray */
+  --secondary-color: #2B6CB0; /* Muted blue */
+  --accent-color: #A0AEC0; /* Light gray-blue */
+  --light-gold: #F0F4F8; /* Very light blue-gray */
+  --bg-light: #F7FAFC; /* Light background */
+  --text-dark: #2D3748; /* Darker text */
+  --text-medium: #4A5568;
+  --text-light: #718096;
+  --border-color: #E2E8F0;
   --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
@@ -209,7 +209,7 @@ body {
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+  background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
 }
 
 .contact-header {
@@ -239,14 +239,14 @@ body {
 .contact-icon {
   width: 50px;
   height: 50px;
-  background-color: rgba(212, 175, 55, 0.1);
+  background-color: rgba(160, 174, 192, 0.1);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 15px;
   flex-shrink: 0;
-  color: var(--accent-color);
+  color: var(--secondary-color);
   font-size: 1.1rem;
 }
 
@@ -371,12 +371,14 @@ body {
 .elegant-form input, .elegant-form textarea {
   width: 100%;
   padding: 12px 15px 12px 45px;
-  border: 1px solid var(--border-color);
+  border: 1px solid ;
+  border-color: var(--secondary-color);
   border-radius: 8px;
   font-size: 0.95rem;
   background-color: #fff;
   transition: var(--transition);
   color: var(--text-dark);
+  box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.2);
 }
 
 .elegant-form textarea {
@@ -412,7 +414,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 4px 15px rgba(139, 90, 43, 0.3);
+  box-shadow: 0 4px 15px rgba(74, 85, 104, 0.3);
   position: relative;
   overflow: hidden;
 }
@@ -440,7 +442,7 @@ body {
 
 .btn-submit:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(139, 90, 43, 0.4);
+  box-shadow: 0 6px 20px rgba(74, 85, 104, 0.4);
 }
 
 /* Responsive Design */
