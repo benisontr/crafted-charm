@@ -15,15 +15,52 @@
             </div>
 
             <div class="mb-4">
-              <select class="form-select" id="billingCountry" name="billingCountry" required>
-                <option value="" disabled selected>Select Country *</option>
-              </select>
+              <input type="text" id="billingCountry" name="billingCountry" value="India" readonly class="form-control" />
             </div>
 
             <div class="row g-3">
               <div class="col-md-6">
-                <input type="text" class="form-control mb-4" id="billingState" placeholder="State *" value="<%= user.address[0]?.billing?.state || '' %>" required>
+                <select class="form-select mb-4" id="billingState" name="billingState" required>
+                  <option value="" disabled selected>Select State</option>
+                  <option value="Andhra Pradesh">Andhra Pradesh</option>
+                  <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                  <option value="Assam">Assam</option>
+                  <option value="Bihar">Bihar</option>
+                  <option value="Chhattisgarh">Chhattisgarh</option>
+                  <option value="Goa">Goa</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="Haryana">Haryana</option>
+                  <option value="Himachal Pradesh">Himachal Pradesh</option>
+                  <option value="Jharkhand">Jharkhand</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Kerala">Kerala</option>
+                  <option value="Madhya Pradesh">Madhya Pradesh</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Manipur">Manipur</option>
+                  <option value="Meghalaya">Meghalaya</option>
+                  <option value="Mizoram">Mizoram</option>
+                  <option value="Nagaland">Nagaland</option>
+                  <option value="Odisha">Odisha</option>
+                  <option value="Punjab">Punjab</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                  <option value="Sikkim">Sikkim</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="Telangana">Telangana</option>
+                  <option value="Tripura">Tripura</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                  <option value="Uttarakhand">Uttarakhand</option>
+                  <option value="West Bengal">West Bengal</option>
+                  <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                  <option value="Chandigarh">Chandigarh</option>
+                  <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                  <option value="Ladakh">Ladakh</option>
+                  <option value="Lakshadweep">Lakshadweep</option>
+                  <option value="Puducherry">Puducherry</option>
+                </select>
               </div>
+
               <div class="col-md-6">
                 <input type="text" class="form-control mb-4" id="billingCity" placeholder="City *" value="<%= user.address[0]?.billing?.city || '' %>" required>
               </div>
@@ -153,7 +190,7 @@
 
 <%- include('./partials/footer') %>
 
-<script>
+<!-- <script>
   document.addEventListener("DOMContentLoaded", () => {
     const couponRadios = document.querySelectorAll('input[name="selectedCoupon"]');
     const manualInput = document.getElementById("couponCodeInput");
@@ -317,6 +354,207 @@
   document.addEventListener("DOMContentLoaded", () => setTimeout(populateCountryDropdowns, 200));
 </script>
 
+<script>
+  async function populateIndianStates() {
+    try {
+      const res = await fetch("/data/states.json"); // your JSON path
+      const states = await res.json();
+      const stateSelect = document.getElementById("billingState");
+
+      states.forEach(state => {
+        const option = document.createElement("option");
+        option.value = state;
+        option.textContent = state;
+
+        // Preselect if user address exists
+        if ("<%= user.address[0]?.billing?.state %>" === state) {
+          option.selected = true;
+        }
+
+        stateSelect.appendChild(option);
+      });
+    } catch (err) {
+      console.error("❌ Error loading states:", err);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    populateIndianStates();
+  });
+</script> -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const couponRadios = document.querySelectorAll('input[name="selectedCoupon"]');
+    const manualInput = document.getElementById("couponCodeInput");
+    const applyBtn = document.getElementById("applyCouponBtn");
+    const discountSpan = document.getElementById("discount");
+    const totalAmountSpan = document.getElementById("total-amount");
+    const finalTotalInput = document.getElementById("finalTotal");
+    const shippingChargeSpan = document.getElementById("shippingCharge");
+    const billingStateInput = document.getElementById("billingState");
+    const baseTotal = parseFloat(document.getElementById("baseTotal").value);
+    const coupons = <%- JSON.stringify(coupons) %>;
+    let currentDiscountPercentage = 0;
+
+    function formatCurrency(value) {
+      return `₹${parseFloat(value).toFixed(2)}`;
+    }
+
+    function getShippingCharge(subTotalAfterDiscount) {
+      return subTotalAfterDiscount < 2500 ? 100 : 0;
+    }
+
+    function updateTotals() {
+      const discountAmount = (baseTotal * currentDiscountPercentage) / 100;
+      const subTotalAfterDiscount = baseTotal - discountAmount;
+      const shippingCharge = getShippingCharge(subTotalAfterDiscount);
+      const finalTotal = (subTotalAfterDiscount + shippingCharge).toFixed(2);
+
+      shippingChargeSpan.textContent = formatCurrency(shippingCharge);
+      discountSpan.textContent = `-${formatCurrency(discountAmount)}`;
+      totalAmountSpan.textContent = formatCurrency(finalTotal);
+      finalTotalInput.value = finalTotal;
+    }
+
+    function applyCoupon(code) {
+      if (code === "none") {
+        currentDiscountPercentage = 0;
+        updateTotals();
+        return;
+      }
+
+      const selected = coupons.find(c => c.code.toLowerCase() === code.toLowerCase());
+      if (!selected) {
+        alert("Invalid or expired coupon code.");
+        currentDiscountPercentage = 0;
+        document.getElementById("noneCoupon").checked = true;
+        updateTotals();
+        return;
+      }
+
+      currentDiscountPercentage = selected.discountPercentage;
+      updateTotals();
+    }
+
+    couponRadios.forEach(radio => {
+      radio.addEventListener("change", () => applyCoupon(radio.value));
+    });
+
+    applyBtn.addEventListener("click", () => {
+      const code = manualInput.value.trim();
+      if (!code) return alert("Enter a coupon code");
+      applyCoupon(code);
+      couponRadios.forEach(radio => {
+        radio.checked = radio.value.toLowerCase() === code.toLowerCase();
+      });
+    });
+
+    billingStateInput.addEventListener("input", updateTotals);
+    applyCoupon(document.querySelector('input[name="selectedCoupon"]:checked').value);
+
+    function validatePhone() {
+      const input = document.getElementById("phone");
+      const err = input.nextElementSibling;
+      input.value = input.value.replace(/\D/g, '');
+      if (input.value.length !== 10) {
+        input.classList.add('is-invalid');
+        err.style.display = 'block';
+      } else {
+        input.classList.remove('is-invalid');
+        err.style.display = 'none';
+      }
+    }
+
+    function validateEmail() {
+      const input = document.getElementById("email");
+      const err = input.nextElementSibling;
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!regex.test(input.value)) {
+        input.classList.add('is-invalid');
+        err.style.display = 'block';
+      } else {
+        input.classList.remove('is-invalid');
+        err.style.display = 'none';
+      }
+    }
+
+    document.getElementById("checkoutForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const requiredFields = ['first-name', 'billingState', 'billingCity', 'billingPincode', 'phone', 'email'];
+      let isValid = true;
+
+      requiredFields.forEach(id => {
+        const input = document.getElementById(id);
+        if (!input.value.trim()) {
+          input.classList.add('is-invalid');
+          isValid = false;
+        } else {
+          input.classList.remove('is-invalid');
+        }
+      });
+
+      validatePhone();
+      validateEmail();
+
+      if (!isValid ||
+        document.getElementById("phone").classList.contains('is-invalid') ||
+        document.getElementById("email").classList.contains('is-invalid')) return;
+
+      const cartData = <%- JSON.stringify({ items: cart, total }) %>;
+      const address = {
+        name: document.getElementById("first-name").value,
+        phone: document.getElementById("phone").value,
+        email: document.getElementById("email").value,
+        state: document.getElementById("billingState").value,
+        city: document.getElementById("billingCity").value,
+        pincode: document.getElementById("billingPincode").value,
+        line: document.getElementById("billingAddressLine2").value
+      };
+
+      const shippingCharge = parseFloat(document.getElementById("shippingCharge").textContent.replace(/[^\d.]/g, "")) || 0;
+      const discount = parseFloat(document.getElementById("discount").textContent.replace(/[^\d.]/g, "")) || 0;
+      const total = parseFloat(document.getElementById("finalTotal").value) || 0;
+
+      try {
+        const response = await fetch("/create-phonepe-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cartData: JSON.stringify(cartData), address, shippingCharge, discount, total })
+        });
+        const result = await response.json();
+        if (result.checkoutPageUrl) window.location.href = result.checkoutPageUrl;
+        else alert("❌ Payment URL not received.");
+      } catch (err) {
+        console.error("❌ Payment error:", err);
+        alert("Something went wrong.");
+      }
+    });
+
+    async function populateIndianStates() {
+      try {
+        const res = await fetch("/data/states.json"); // Your JSON file path
+        const states = await res.json();
+        const stateSelect = document.getElementById("billingState");
+
+        states.forEach(state => {
+          const option = document.createElement("option");
+          option.value = state;
+          option.textContent = state;
+
+          if ("<%= user.address[0]?.billing?.state %>" === state) {
+            option.selected = true;
+          }
+
+          stateSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error("❌ Error loading states:", err);
+      }
+    }
+
+    populateIndianStates(); // Load states on DOM ready
+  });
+</script>
 
     <style>
       /* Modern Fonts */

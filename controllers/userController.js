@@ -240,7 +240,7 @@ const order = await Orders.findById(newOrder._id).populate('items.productId');
 });
 
       delete tempBookingStore[merchantOrderId];
-      return res.redirect(successUrl);
+      return res.redirect(`${baseUrl}/order?id=${newOrder._id}`);
     } else {
       console.log(`Payment status: ${status}`);
       return res.redirect(failureUrl);
