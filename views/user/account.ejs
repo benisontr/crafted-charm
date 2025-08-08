@@ -1,0 +1,924 @@
+<%- include('./partials/header') %>
+<%- include('./partials/userHeader') %>
+
+<style>
+  :root {
+    --primary-color: #5F6FFF;
+    --secondary-color: #4A4DE6;
+    --accent-color: #FF6584;
+    --light-color: #F8FAFC;
+    --light-gray: #F1F5F9;
+    --medium-gray: #E2E8F0;
+    --dark-gray: #64748B;
+    --text-color: #1E293B;
+    --text-light: #64748B;
+    --white: #FFFFFF;
+    --success-color: #10B981;
+    --warning-color: #F59E0B;
+    --danger-color: #EF4444;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+    background-color: var(--light-color);
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+  }
+
+  .axil-dashboard-area {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    padding: 30px;
+    margin-bottom: 30px;
+  }
+
+  /* Dashboard Navigation - Top Navigation Style */
+  .dashboard-top-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--medium-gray);
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .dashboard-top-nav .nav-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
+    text-decoration: none;
+    background-color: var(--light-gray);
+    border: 1px solid var(--medium-gray);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .dashboard-top-nav .nav-link:hover {
+    background-color: var(--medium-gray);
+    color: var(--text-color);
+  }
+
+  .dashboard-top-nav .nav-link.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+  }
+
+  .dashboard-top-nav .nav-link i {
+    font-size: 16px;
+    margin-right: 8px;
+    min-width: 16px;
+    text-align: center;
+    color: inherit;
+  }
+
+  /* Dashboard Content */
+  .axil-dashboard-overview {
+    background: var(--white);
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .welcome-text {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--text-color);
+  }
+
+  /* Tables */
+  .axil-dashboard-order .table {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .axil-dashboard-order .table thead th {
+    background-color: var(--primary-color);
+    color: var(--white);
+    font-weight: 500;
+    padding: 15px;
+  }
+
+  .axil-dashboard-order .table tbody td {
+    padding: 12px 15px;
+    vertical-align: middle;
+  }
+
+  .axil-dashboard-order .table tbody tr:nth-child(even) {
+    background-color: var(--light-gray);
+  }
+
+  /* Buttons */
+  .axil-btn {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    transition: var(--transition);
+  }
+
+  .axil-btn:hover {
+    background-color: var(--secondary-color);
+    color: var(--white);
+    transform: translateY(-2px);
+  }
+
+  .view-btn {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+  }
+
+  .view-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+  }
+
+  /* Address Section */
+  .axil-dashboard-address {
+    background: var(--white);
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .address-info {
+    background: var(--light-gray);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    height: 100%;
+  }
+
+  .addrss-header {
+    border-bottom: 1px solid var(--medium-gray);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+  }
+
+  .address-edit {
+    color: var(--primary-color);
+    font-size: 14px;
+  }
+
+  .address-details li {
+    margin-bottom: 8px;
+  }
+
+  /* Forms */
+  .account-details-form .form-group {
+    margin-bottom: 20px;
+  }
+
+  .account-details-form label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .account-details-form .form-control {
+    border: 1px solid var(--medium-gray);
+    border-radius: var(--border-radius-sm);
+    padding: 10px 15px;
+    transition: var(--transition);
+  }
+
+  .account-details-form .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(95, 111, 255, 0.2);
+  }
+
+  /* Password Generator */
+  #password-rules-container {
+    background: var(--light-gray);
+    padding: 12px;
+    border-radius: var(--border-radius-sm);
+    margin-top: 10px;
+  }
+
+  #password-rules li {
+    margin-bottom: 5px;
+  }
+
+  /* Tracking Section */
+  .track-step {
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 25px;
+  }
+
+  .track-step::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    z-index: 1;
+  }
+
+  .track-step.completed::before {
+    background: var(--success-color);
+  }
+
+  .track-step::after {
+    content: '';
+    position: absolute;
+    left: 13px;
+    top: 20px;
+    height: calc(100% - 20px);
+    width: 2px;
+    background: var(--medium-gray);
+  }
+
+  .track-step:last-child::after {
+    content: none;
+  }
+
+  /* Return Form */
+  #returnForm {
+    background: var(--white);
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Responsive Styles */
+  @media (max-width: 991.98px) {
+    .axil-dashboard-warp {
+      padding: 15px;
+    }
+    
+    .dashboard-top-nav {
+      gap: 6px;
+    }
+    
+    .dashboard-top-nav .nav-link {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .dashboard-top-nav {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    
+    .dashboard-top-nav::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .address-info {
+      margin-bottom: 20px;
+    }
+
+    .track-step {
+      padding-left: 25px;
+      font-size: 0.95rem;
+    }
+
+    .track-step::before {
+      width: 12px;
+      height: 12px;
+      top: 5px;
+    }
+
+    .track-step::after {
+      left: 10px;
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .axil-dashboard-area {
+      padding: 20px 15px;
+    }
+
+    .axil-dashboard-order .table {
+      font-size: 14px;
+    }
+
+    .axil-dashboard-order .table thead th,
+    .axil-dashboard-order .table tbody td {
+      padding: 8px 10px;
+    }
+    
+    .dashboard-top-nav .nav-link {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+    
+    .dashboard-top-nav .nav-link i {
+      font-size: 14px;
+      margin-right: 6px;
+    }
+  }
+</style>
+
+<div class="axil-dashboard-area axil-section-gap">
+  <div class="container">
+    <div class="axil-dashboard-warp">
+      <!-- Top Navigation Tabs -->
+      <ul class="nav dashboard-top-nav" id="dashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#nav-dashboard" type="button" role="tab" aria-controls="nav-dashboard" aria-selected="true">
+            <i class="fas fa-home"></i> Dashboard
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#nav-orders" type="button" role="tab" aria-controls="nav-orders" aria-selected="false">
+            <i class="fas fa-shopping-bag"></i> Orders
+          </button>
+        </li>
+        <!-- <li class="nav-item" role="presentation">
+          <button class="nav-link" id="return-tab" data-bs-toggle="tab" data-bs-target="#product-return" type="button" role="tab" aria-controls="product-return" aria-selected="false">
+            <i class="fas fa-exchange-alt"></i> Returns
+          </button>
+        </li> -->
+        <!-- <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tracking-tab" data-bs-toggle="tab" data-bs-target="#order-tracking" type="button" role="tab" aria-controls="order-tracking" aria-selected="false">
+            <i class="fas fa-truck"></i> Tracking
+          </button>
+        </li> -->
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="address-tab" data-bs-toggle="tab" data-bs-target="#address" type="button" role="tab" aria-controls="address" aria-selected="false">
+            <i class="fas fa-map-marker-alt"></i> Address
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="account-tab" data-bs-toggle="tab" data-bs-target="#nav-account" type="button" role="tab" aria-controls="nav-account" aria-selected="false">
+            <i class="fas fa-user-cog"></i> Account
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" href="/signout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </li>
+      </ul>
+      
+      <div class="tab-content" id="dashboardTabsContent">
+        <!-- Dashboard Tab -->
+        <div class="tab-pane fade show active" id="nav-dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+          <div class="axil-dashboard-overview">
+            <div class="welcome-text">Hello <%= user.name %></div>
+            <p>From your account dashboard you can view your recent orders, manage your shipping and billing addresses, manage your order return, view your orders and edit your password and account details.</p>
+          </div>
+        </div>
+        
+        <!-- Orders Tab -->
+        <div class="tab-pane fade" id="nav-orders" role="tabpanel" aria-labelledby="orders-tab">
+          <div class="axil-dashboard-order">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Order ID</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (user.orders.length === 0) { %>
+                    <tr>
+                      <td colspan="5" class="text-center">No orders found.</td>
+                    </tr>
+                  <% } else { %>
+                    <% user.orders.forEach(order => { 
+                      const o = order.orderId;
+                      if (!o) return;
+                      const itemCount = o.items?.length || 0;
+                      const total = o.total || 0;
+                    %>
+                      <tr>
+                        <th scope="row"><%= o.orderId %></th>
+                        <td><%= o.createdAt.toLocaleDateString('en-IN') %></td>
+                        <td><%= o.status %></td>
+                        <td>₹<%= total.toFixed(2) %> for <%= itemCount %> item<%= itemCount > 1 ? 's' : '' %></td>
+                        <td><a href="/order?id=<%= o._id %>" class="axil-btn view-btn">View</a></td>
+                      </tr>
+                    <% }) %>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Tracking Tab -->
+        <div class="tab-pane fade" id="order-tracking" role="tabpanel" aria-labelledby="tracking-tab">
+          <div class="card-body">
+            <h4 class="text-center text-primary mb-4">📦 Track Your Order</h4>
+
+            <!-- Order ID input -->
+            <form action="/track" method="GET" class="mb-4">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Enter your Order ID or AWB No." name="trackingId" required>
+                <button class="btn btn-primary" type="submit">Track</button>
+              </div>
+            </form>
+
+            <!-- Dummy DTDC tracking UI -->
+            <div class="mb-3">
+              <h6>Courier: <span class="fw-semibold">DTDC</span></h6>
+              <p><i class="fas fa-barcode me-2"></i><strong>Tracking ID:</strong> DTDC123456789</p>
+              <p><i class="fas fa-truck-fast me-2"></i><strong>Estimated Delivery:</strong> July 10, 2025</p>
+            </div>
+
+            <!-- Tracking Progress -->
+            <div class="mt-4">
+              <div class="track-step completed">
+                <div>Order Placed <span class="text-muted small"> - July 3, 2025</span></div>
+              </div>
+              <div class="track-step completed">
+                <div>Shipped via DTDC <span class="text-muted small"> - July 4, 2025</span></div>
+              </div>
+              <div class="track-step">
+                <div>In Transit <span class="text-muted small"> - Expected July 7, 2025</span></div>
+              </div>
+              <div class="track-step">
+                <div>Out for Delivery</div>
+              </div>
+              <div class="track-step">
+                <div>Delivered</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Product Return Tab -->
+        <div class="tab-pane fade" id="product-return" role="tabpanel" aria-labelledby="return-tab">
+          <div class="card-body">
+            <h3 class="text-center text-danger mb-4">Return Product Request</h3>
+
+            <form id="returnForm">
+              <div class="mb-3">
+                <label for="receivedDate" class="form-label">Order Id</label>
+                <input type="text" class="form-control" id="orderId" name="orderId" required style="border: 1px solid #333;">
+              </div>
+              <div class="mb-3">
+                <label for="receivedDate" class="form-label">Product Name</label>
+                <input type="text" class="form-control" id="productName" name="productName" required style="border: 1px solid #333;">
+              </div>
+
+              <!-- Date of Product Received -->
+              <div class="mb-3">
+                <label for="receivedDate" class="form-label">Date of Product Received</label>
+                <input type="date" class="form-control" id="receivedDate" name="receivedDate" required style="border: 1px solid #333;">
+                <small id="dateError" class="text-danger d-none">Return period has expired. Only returns within 7 days are allowed.</small>
+              </div>
+
+              <!-- Reason -->
+              <div class="mb-3">
+                <label for="reason" class="form-label">Reason for Return</label>
+                <select class="form-select" id="reason" name="reason" required>
+                  <option value="" disabled selected>Select a reason</option>
+                  <option>Damaged product</option>
+                  <option>Wrong item delivered</option>
+                  <option>Not as described</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <!-- Additional Description -->
+              <div class="mb-3">
+                <label for="description" class="form-label">Additional Details (optional)</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+              </div>
+
+              <!-- Upload Image -->
+              <div class="mb-3">
+                <label for="image" class="form-label">Upload Image (optional)</label>
+                <input class="form-control" type="file" id="image" name="image">
+              </div>
+
+              <!-- Submit -->
+              <div class="d-grid">
+                <button type="submit" class="btn btn-danger">Submit Return Request</button>
+              </div>
+            </form>
+
+            <div class="mt-3 text-center text-muted" style="font-size: 0.9rem;">
+              Return requests are allowed only within 7 days of receiving the product.
+            </div>
+          </div>
+        </div>
+        
+        <!-- Address Tab -->
+        <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+          <div class="axil-dashboard-address">
+            <p class="notice-text">The following addresses will be used on the checkout page by default.</p>
+            <div class="row row--30">
+              <div class="col-lg-6">
+                <div class="address-info mb--40">
+                  <div class="addrss-header d-flex align-items-center justify-content-between">
+                    <h4 class="title mb-0">Billing Address</h4>
+                  </div>
+                  <ul class="address-details">
+                    <li>Name: <%= user.name %></li>
+                    <li>Email: <%= user.email %></li>
+                   <li>Phone: <%= user.address[0].shipping.phone %> </li>
+                    <% if (user.address && user.address.length > 0 && user.address[0].billing) { %>
+                     <li class="mt--30">
+                        <%= user.address[0].shipping.addressLine %> <br>
+                        <%= user.address[0].shipping.city %> <br>
+                        <%= user.address[0].shipping.state %> <br>
+                        <%= user.address[0].shipping.country %> <br>
+                        <%= user.address[0].shipping.pincode %> <br>
+                      </li>
+                    <% } else { %>
+                      <li class="mt--30">No billing address available.</li>
+                    <% } %>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="address-info">
+                  <div class="addrss-header d-flex align-items-center justify-content-between">
+                    <h4 class="title mb-0">Shipping Address</h4>
+                  </div>
+                  <ul class="address-details">
+                    <li>Email: <%= user.email %></li>
+                    <% if (user.address && user.address.length > 0 && user.address[0].shipping) { %>
+                      <li class="mt--30">
+                        <%= user.address[0].shipping.name %><br>
+                        <%= user.address[0].shipping.addressLine %> <br>
+                        <%= user.address[0].shipping.city %> <br>
+                        <%= user.address[0].shipping.state %> <br>
+                        <%= user.address[0].shipping.country %> <br>
+                        <%= user.address[0].shipping.pincode %> <br>
+                        <%= user.address[0].shipping.phone %>
+                      </li>
+                    <% } else { %>
+                      <li class="mt--30">No shipping address available.</li>
+                    <% } %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Account Details Tab -->
+        <div class="tab-pane fade" id="nav-account" role="tabpanel" aria-labelledby="account-tab">
+          <div class="col-lg-12">
+            <div class="axil-dashboard-account">
+              <form class="account-details-form" id="accountForm">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="form-group">
+                      <label>Name</label>
+                      <input type="text" class="form-control" id="name" value="<%= user.name %>">
+                      <p class="b3 mt--10">This will be how your name will be displayed in the account section and in reviews</p>
+                    </div>
+                  </div>
+                  
+                  <div class="col-12">
+                    <div class="form-group mb--40">
+                      <label>Country/ Region</label>
+                      <select id="country" class="form-control"></select>
+                      
+                    </div>
+                  </div>
+                  
+                  <div class="col-12">
+                    <h5 class="title">Password Change</h5>
+
+                    <!-- Current Password -->
+                    <div class="form-group position-relative">
+                      <input type="password" class="form-control" id="current-password" name="currentPassword" placeholder="Current Password" required>
+                      <i class="fakepasswordicon fas fa-eye-slash"></i>
+                    </div>
+
+                    <!-- New Password + Eye + Generate -->
+                    <div class="form-group position-relative">
+                      <input type="password" class="form-control fakepassword pe-5" id="new-password" name="newPassword" placeholder="New Password" autocomplete="new-password" required>
+                      <i class="fakepasswordicon fas fa-eye-slash"></i>
+                      <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="generate-password-btn">Generate Strong Password</button>
+                      <div id="password-rules-container" class="d-none">
+                        <!-- <ul id="password-rules" class="text-danger small ps-3 mb-3" style="list-style: none;">
+                          <li id="rule-length">❌ Minimum 8 characters</li>
+                          <li id="rule-upper">❌ At least 1 uppercase letter</li>
+                          <li id="rule-lower">❌ At least 1 lowercase letter</li>
+                          <li id="rule-number">❌ At least 1 number</li>
+                          <li id="rule-special">❌ At least 1 special character (@, #, $, *)</li>
+                        </ul> -->
+                      </div>
+                    </div>
+
+                    <!-- Confirm New Password -->
+                    <div class="form-group position-relative">
+                      <input type="password" class="form-control" id="confirm-password" name="confirmNewPassword" placeholder="Confirm New Password" required>
+                      <i class="fakepasswordicon fas fa-eye-slash"></i>
+                    </div>
+
+                    <div class="form-group mb--0">
+                      <input type="submit" class="axil-btn" value="Save Changes">
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  async function populateCountryDropdowns() {
+    try {
+      const response = await fetch("/api/countries");
+      const countries = await response.json();
+
+      const countrySelect = document.getElementById("country");
+
+      countries.forEach(country => {
+        const option = document.createElement("option");
+        option.value = country;
+        option.textContent = country;
+        countrySelect.appendChild(option);
+      });
+    } catch (err) {
+      console.error("Error fetching country list:", err);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // Initialize Bootstrap tabs
+    const tabElms = document.querySelectorAll('button[data-bs-toggle="tab"]');
+    tabElms.forEach(tabEl => {
+      tabEl.addEventListener('click', function(event) {
+        const tabTriggerEl = this;
+        const tabTarget = document.querySelector(tabTriggerEl.getAttribute('data-bs-target'));
+        const tabInstance = new bootstrap.Tab(tabTriggerEl);
+        tabInstance.show();
+      });
+    });
+
+    populateCountryDropdowns();
+    
+    // Populate countries in the billing form
+    const billingCountrySelect = document.getElementById("billingCountry");
+    if (billingCountrySelect) {
+      fetch("/api/countries")
+        .then(res => res.json())
+        .then(countries => {
+          countries.forEach(country => {
+            const option = document.createElement("option");
+            option.value = country;
+            option.textContent = country;
+            billingCountrySelect.appendChild(option);
+          });
+        })
+        .catch(console.error);
+    }
+
+    // Billing form submission
+    const billingForm = document.getElementById("billingForm");
+    if (billingForm) {
+      billingForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const data = {
+          billing: {
+            name: document.getElementById("billingName").value,
+            addressLine: document.getElementById("billingAddressLine").value,
+            city: document.getElementById("billingCity").value,
+            state: document.getElementById("billingState").value,
+            country: document.getElementById("billingCountry").value,
+            pincode: document.getElementById("billingPincode").value,
+            phone: document.getElementById("billingPhone").value,
+          },
+        };
+
+        try {
+          const response = await fetch("/add-billing", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          });
+
+          const result = await response.json();
+
+        if (response.ok) {
+          alert("Billing address saved successfully!");
+          location.reload();
+        } else {
+          alert(result.message || "Failed to save billing address.");
+        }
+      } catch (error) {
+        console.error("Billing form error:", error);
+        alert("Something went wrong. Try again later.");
+      }
+    });
+  }
+
+
+
+    // Password visibility toggle
+    document.querySelectorAll('.fakepasswordicon').forEach(icon => {
+      icon.addEventListener('click', function() {
+        const input = this.previousElementSibling;
+        if (input.type === 'password') {
+          input.type = 'text';
+          this.classList.remove('fa-eye-slash');
+          this.classList.add('fa-eye');
+        } else {
+          input.type = 'password';
+          this.classList.remove('fa-eye');
+          this.classList.add('fa-eye-slash');
+        }
+      });
+    });
+
+    // Password strength validation
+    const passwordInput = document.getElementById("new-password");
+    const confirmPasswordInput = document.getElementById("confirm-password");
+    const ruleContainer = document.getElementById("password-rules-container");
+
+    const rules = {
+      length: document.getElementById("rule-length"),
+      upper: document.getElementById("rule-upper"),
+      lower: document.getElementById("rule-lower"),
+      number: document.getElementById("rule-number"),
+      special: document.getElementById("rule-special"),
+    };
+
+    passwordInput.addEventListener("focus", () => {
+      ruleContainer.classList.remove("d-none");
+    });
+
+    passwordInput.addEventListener("input", function() {
+      const value = passwordInput.value;
+      const conditions = {
+        length: value.length >= 8,
+        upper: /[A-Z]/.test(value),
+        lower: /[a-z]/.test(value),
+        number: /[0-9]/.test(value),
+        special: /[@#$*]/.test(value),
+      };
+
+      Object.keys(conditions).forEach(key => {
+        if (conditions[key]) {
+          rules[key].classList.remove("text-danger");
+          rules[key].classList.add("text-success");
+          rules[key].textContent = "✅ " + rules[key].textContent.slice(2);
+        } else {
+          rules[key].classList.add("text-danger");
+          rules[key].classList.remove("text-success");
+          rules[key].textContent = "❌ " + rules[key].textContent.slice(2);
+        }
+      });
+
+      const allValid = Object.values(conditions).every(Boolean);
+      confirmPasswordInput.disabled = !allValid;
+    });
+
+    // Generate strong password
+    document.getElementById("generate-password-btn").addEventListener("click", () => {
+      const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const lower = "abcdefghijklmnopqrstuvwxyz";
+      const numbers = "0123456789";
+      const special = "@#$*";
+      const all = upper + lower + numbers + special;
+
+      let password = "";
+      password += upper[Math.floor(Math.random() * upper.length)];
+      password += lower[Math.floor(Math.random() * lower.length)];
+      password += numbers[Math.floor(Math.random() * numbers.length)];
+      password += special[Math.floor(Math.random() * special.length)];
+
+      for (let i = password.length; i < 10; i++) {
+        password += all[Math.floor(Math.random() * all.length)];
+      }
+
+      passwordInput.value = password.split("").sort(() => 0.5 - Math.random()).join("");
+      passwordInput.dispatchEvent(new Event("input"));
+      passwordInput.focus();
+    });
+
+    // Form submission
+    document.getElementById("accountForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const country = document.getElementById("country").value.trim();
+      const currentPassword = document.getElementById("current-password").value;
+      const newPassword = document.getElementById("new-password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
+
+      try {
+        const response = await fetch("/account-edit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            country,
+            currentPassword,
+            newPassword,
+            confirmPassword,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert("Account details updated successfully!");
+          location.reload();
+        } else {
+          alert(data.message || "Something went wrong.");
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        alert("An error occurred.");
+      }
+    });
+
+    // Return form validation
+    function isReturnValid() {
+      const receivedDate = new Date(document.getElementById('receivedDate').value);
+      const today = new Date();
+      const diffTime = today - receivedDate;
+      const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+      const dateError = document.getElementById('dateError');
+      if (diffDays > 7) {
+        dateError.classList.remove('d-none');
+        return false;
+      }
+      dateError.classList.add('d-none');
+      return true;
+    }
+
+    document.getElementById('returnForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      if (!isReturnValid()) return;
+
+      const form = document.getElementById('returnForm');
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('/return', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          alert("Return request submitted successfully!");
+          if (result.redirect) {
+            window.location.href = result.redirect;
+          } else {
+            window.location.href = '/account';
+          }
+        } else {
+          alert("Failed to submit return request. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred while submitting the form.");
+      }
+    });
+  });
+</script>
+
+<%- include('./partials/footer') %>

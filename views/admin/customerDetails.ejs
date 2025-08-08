@@ -1,0 +1,214 @@
+ <%- include('./partials/header') %>
+<%- include('./partials/adminHeader') %>
+
+
+     <!-- START Wrapper -->
+     <div class="wrapper">
+<%- include('./partials/sidebar') %>
+
+               <div class="page-content">
+
+                    <!-- Start Container Fluid -->
+                    <div class="container-xxl">
+
+
+                         <div class="row">
+                              <div class="col-lg-4">
+                                   <div class="card overflow-hidden">
+                                        <div class="card-body">
+                                             <div class="p-2">
+                                                  <h4 class="mb-1"><%= user.name %></h4>
+                                                  <div class="mt-2">
+                                                       <p class="fs-15 mb-1 mt-1"><span class="text-dark fw-semibold">Email : </span> <%= user.email %> </p>
+                                                       <p class="fs-15 mb-0 mt-1"><span class="text-dark fw-semibold">Phone : </span> <%= user.mobile %></p>
+                                                  </div>
+                                             </div>
+                                        </div>
+                                       
+                                   </div>
+
+                                   <div class="card">
+                                        <div class="card-header d-flex align-items-center justify-content-between">
+                                             <div>
+                                                  <h4 class="card-title">Delivery Addresses</h4>
+                                             </div>
+                                             <!-- <div>
+                                                  <span class="badge bg-success-subtle text-success px-2 py-1">Active User</span>
+                                             </div> -->
+
+                                        </div>
+                                        <div class="card-body py-2">
+                                             <div class="table-responsive">
+                                                  <table class="table mb-0">
+                                                       <tbody>
+                                                            <!-- <tr>
+                                                                 <td class="px-0">
+                                                                      <p class="d-flex mb-0 align-items-center gap-1 fw-semibold text-dark">Account ID : </p>
+                                                                 </td>
+                                                                 <td class="text-dark fw-medium px-0">#AC-278699</td>
+                                                            </tr>
+                                                            <tr>
+                                                                 <td class="px-0">
+                                                                      <p class="d-flex mb-0 align-items-center gap-1 fw-semibold text-dark"> Invoice Email : </p>
+                                                                 </td>
+                                                                 <td class="text-dark fw-medium px-0">michaelaminer@dayrep.com</td>
+                                                            </tr> -->
+                                                            <tr>
+  <td class="px-0" style="display: block;">
+    <p class="d-flex mb-0 align-items-center gap-1 fw-medium text-dark"> Shipping Address: </p>
+  </td>
+  <td class="text-dark fw-normal px-0" style="display: block;">
+    <div>Address: <%= user.address[0]?.shipping.addressLine || 'N/A' %></div>
+    <div>City: <%= user.address[0]?.shipping.city || 'N/A' %></div>
+    <div>State: <%= user.address[0]?.shipping.state || 'N/A' %></div>
+    <div>Country: <%= user.address[0]?.shipping.country || 'N/A' %></div>
+    <div>PinCode: <%= user.address[0]?.shipping.pincode || 'N/A' %></div>
+    <hr>
+  </td>
+    <td class="px-0" style="display: block;">
+    <p class="d-flex mb-0 align-items-center gap-1 fw-medium text-dark"> Billing Address: </p>
+  </td>
+  <td class="text-dark fw-normal px-0" style="display: block;">
+    <div>Address: <%= user.address[0]?.billing.addressLine || 'N/A' %></div>
+    <div>City: <%= user.address[0]?.billing.city || 'N/A' %></div>
+    <div>State: <%= user.address[0]?.billing.state || 'N/A' %></div>
+    <div>Country: <%= user.address[0]?.billing.country || 'N/A' %></div>
+    <div>PinCode: <%= user.address[0]?.billing.pincode || 'N/A' %></div>
+    <hr>
+  </td>
+</tr>
+
+                                                       </tbody>
+                                                  </table>
+                                             </div>
+                                        </div>
+                                   </div>
+
+                              </div>
+
+                              <div class="col-lg-8">
+                                   <div class="row">
+                                        <!-- <div class="col-lg-4">
+                                             <div class="card">
+                                                  <div class="card-body">
+                                                       <div class="d-flex align-items-center justify-content-between">
+                                                            <div>
+                                                                 <h4 class="card-title mb-2 d-flex align-items-center gap-2">Total Invoice</h4>
+                                                                 <p class="text-muted fw-medium fs-22 mb-0">234</p>
+                                                            </div>
+                                                            <div>
+                                                                 <div class="avatar-md bg-primary bg-opacity-10 rounded">
+                                                                      <iconify-icon icon="solar:bill-list-bold-duotone" class="fs-32 text-primary avatar-title"></iconify-icon>
+                                                                 </div>
+                                                            </div>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                        </div> -->
+                                        <div class="col-lg-6">
+                                             <div class="card">
+                                                  <div class="card-body">
+                                                       <div class="d-flex align-items-center justify-content-between">
+                                                            <div>
+                                                                 <h4 class="card-title mb-2 d-flex align-items-center gap-2">Total Order</h4>
+                                                                 <p class="text-muted fw-medium fs-22 mb-0"><%= user.orders.length %></p>
+                                                            </div>
+                                                            <div>
+                                                                 <div class="avatar-md bg-primary bg-opacity-10 rounded">
+                                                                      <iconify-icon icon="solar:box-bold-duotone" class="fs-32 text-primary avatar-title"></iconify-icon>
+                                                                 </div>
+                                                            </div>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                             <div class="card">
+                                                  <div class="card-body">
+                                                       <div class="d-flex align-items-center justify-content-between">
+                                                            <div>
+                                                                 <h4 class="card-title mb-2 d-flex align-items-center gap-2">Total Expense</h4>
+                                                                 <p class="text-muted fw-medium fs-22 mb-0"><%= totalOrderPrice %></p>
+                                                            </div>
+                                                            <div>
+                                                                 <div class="avatar-md bg-primary bg-opacity-10 rounded">
+                                                                      <iconify-icon icon="solar:chat-round-money-bold-duotone" class="fs-32 text-primary avatar-title"></iconify-icon>
+                                                                 </div>
+                                                            </div>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                        </div>
+                                   </div>
+
+                                   <div class="card">
+                                        <div class="card-header">
+                                             <h4 class="card-title">Order History</h4>
+                                        </div>
+                                        <div class="card-body">
+                                             <div class="table-responsive">
+                                                  <table class="table align-middle mb-0 table-hover table-centered">
+                                                       <thead class="bg-light-subtle">
+                                                            <tr>
+                                                                 <th>Order ID</th>
+                                                                 <th>Status</th>
+                                                                 <th>Total Amount</th>
+                                                                 <th>Order Date</th>
+                                                                 <!-- <th>Payment Method</th> -->
+                                                            </tr>
+                                                       </thead>
+                                                       <tbody>
+                                                            <% if(orders && orders.length > 0) { %>
+                                                                 <% orders.forEach((order, index) => { %>
+                                                            <tr>
+                                                                 <td> <%= order.orderId %></td>
+                                                                 <td> <span class="badge bg-success-subtle text-success py-1 px-2"><%= order.status %></span> </td>
+                                                                 <td> <%= order.total %> </td>
+                                                                 <td> <%= order.createdAt.toLocaleDateString('en-IN') %></td>
+                                                            </tr>
+                                                                 <% }) %>
+                                                            <% } else { %>
+                                                                 <tr>
+                                                                      <td colspan="4">No orders</td>
+                                                                 </tr>
+                                                            <% } %>
+                                                       </tbody>
+                                                  </table>
+                                             </div>
+                                        </div>
+                                        <div class="card-footer border-top">
+                                             <ul class="pagination pagination-rounded m-0 justify-content-end">
+                                                  <li class="page-item">
+                                                       <a href="#" class="page-link"><i class="bx bx-left-arrow-alt"></i></a>
+                                                  </li>
+                                                  <li class="page-item active">
+                                                       <a href="#" class="page-link">1</a>
+                                                  </li>
+                                                  <li class="page-item">
+                                                       <a href="#" class="page-link">2</a>
+                                                  </li>
+                                                  <li class="page-item">
+                                                       <a href="#" class="page-link">3</a>
+                                                  </li>
+                                                  <li class="page-item">
+                                                       <a href="#" class="page-link"><i class="bx bx-right-arrow-alt"></i></a>
+                                                  </li>
+                                             </ul>
+                                        </div>
+                                   </div>
+                                   
+                              </div>
+                         </div>
+
+
+                    </div>
+                    <!-- End Container Fluid -->
+
+                   
+
+               </div>
+               <!-- ==================================================== -->
+               <!-- End Page Content -->
+               <!-- ==================================================== -->
+   <%- include('./partials/footer') %>
+          </div>

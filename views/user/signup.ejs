@@ -1,0 +1,366 @@
+<%- include('./partials/header') %>
+<%- include('./partials/loginheader') %>
+
+<body>
+  <div class="signup-container">
+    <header class="navbar"></header>
+
+    <div class="login-form-box">
+      <div class="logo">
+        <a href="/" class="logo-dark d-inline-block">
+          <img
+            src="assets/images/logo/logo-cc-login.png"
+            alt="Crafted Charm Logo"
+            style="height: 100px; width: 100px; display: block; margin: 0 auto;"
+          />
+        </a>
+        <p class="tagline">Begin your journey with Crafted Charm — where healing crystals meet timeless beauty.</p>
+      </div>
+
+      <form id="signupForm" action="/signup" method="POST">
+        <!-- Username -->
+        <div class="input-wrapper">
+          <input type="text" name="name" placeholder="Enter your full name" autocomplete="off" required/>
+          <span class="input-error-message" id="nameError"></span>
+        </div>
+
+        <!-- Email -->
+        <div class="input-wrapper">
+          <input type="email" name="email" placeholder="Enter your email" autocomplete="off" required/>
+          <span class="input-error-message" id="emailError"></span>
+        </div>
+
+        <!-- Password -->
+        <div class="input-wrapper position-relative">
+          <input
+            type="password"
+            id="psw-input"
+            name="password"
+            placeholder="Create a password"
+            class="form-control fakepassword pe-5"
+            autocomplete="new-password"
+            required
+          />
+          <button type="button" class="btn btn-sm btn-outline-light mt-2" id="generate-password-btn">
+            Generate Strong Password
+          </button>
+
+          <!-- Password Rules -->
+          <div id="password-rules-container" class="d-none">
+            <ul id="password-rules" class="password-rules-list">
+              <li id="rule-length">❌ Minimum 8 characters</li>
+              <li id="rule-upper">❌ At least 1 uppercase letter</li>
+              <li id="rule-lower">❌ At least 1 lowercase letter</li>
+              <li id="rule-number">❌ At least 1 number</li>
+              <li id="rule-special">❌ At least 1 special character (@, #, $, *)</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="input-wrapper position-relative">
+          <input
+            type="password"
+            id="confirm-password"
+            name="confirmPassword"
+            placeholder="Confirm your password"
+            required
+          />
+          <i class="fakepasswordicon fas fa-eye-slash password-toggle" style="position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer; color: #999;"></i>
+          <span class="input-error-message" id="confirmPasswordError"></span>
+        </div>
+
+        <button type="submit" class="cta-button">Create Account</button>
+      </form>
+
+      <p class="login-text">
+        Already have an account? <a href="/signin" class="login-link">Back to Login</a>
+      </p>
+    </div>
+  </div>
+</body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const passwordInput = document.getElementById("psw-input");
+    const confirmPasswordInput = document.getElementById("confirm-password");
+
+    function generateStrongPassword() {
+      const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const lower = "abcdefghijklmnopqrstuvwxyz";
+      const numbers = "0123456789";
+      const special = "@#$*";
+      const all = upper + lower + numbers + special;
+
+      let password = "";
+      password += upper[Math.floor(Math.random() * upper.length)];
+      password += lower[Math.floor(Math.random() * lower.length)];
+      password += numbers[Math.floor(Math.random() * numbers.length)];
+      password += special[Math.floor(Math.random() * special.length)];
+
+      for (let i = password.length; i < 10; i++) {
+        password += all[Math.floor(Math.random() * all.length)];
+      }
+
+      return password
+        .split("")
+        .sort(() => 0.5 - Math.random())
+        .join("");
+    }
+
+    document.getElementById("generate-password-btn").addEventListener("click", () => {
+      const generated = generateStrongPassword();
+      passwordInput.value = generated;
+      confirmPasswordInput.disabled = false; 
+    });
+
+    document.getElementById("signupForm").addEventListener("submit", function (e) {
+      const password = passwordInput.value.trim();
+      const confirmPassword = confirmPasswordInput.value.trim();
+      const errorMsg = document.getElementById("confirmPasswordError");
+
+      if (password !== confirmPassword) {
+        e.preventDefault();
+        errorMsg.textContent = "Passwords do not match.";
+        confirmPasswordInput.focus();
+      } else {
+        errorMsg.textContent = ""; // clear any previous error
+      }
+    });
+
+    document.querySelectorAll(".password-toggle").forEach(icon => {
+      icon.addEventListener("click", function () {
+        const input = this.previousElementSibling;
+        const isPassword = input.type === "password";
+        input.type = isPassword ? "text" : "password";
+        this.classList.toggle("fa-eye-slash");
+        this.classList.toggle("fa-eye");
+      });
+    });
+  });
+</script>
+
+<style>
+  :root {
+  --primary-color: #8b5a2b; /* Earthy brown for crystals/bracelets */
+  --secondary-color: #d4af37; /* Gold accent */
+  --accent-color: #6a4c93; /* Amethyst purple */
+  --text-light: #f8f9fa;
+  --text-dark: #212529;
+  --bg-dark: #1a1a1a;
+  --bg-light: #2d2d2d;
+  --success-color: #28a745;
+  --error-color: #dc3545;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-light);
+}
+
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #fefaf6, #f3f0e8);
+}
+
+.login-form-box {
+  background-color: rgba(26, 26, 26, 0.9);
+  padding: 2.5rem;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.login-form-box:hover {
+  transform: translateY(-5px);
+}
+
+.logo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo img {
+  height: 80px;
+  width: auto;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
+}
+
+.tagline {
+  font-size: 1rem;
+  color: var(--text-light);
+  opacity: 0.8;
+  line-height: 1.6;
+  margin-top: 1rem;
+}
+
+.input-wrapper {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-light);
+  transition: all 0.3s ease;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.input-wrapper input:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.input-wrapper input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.input-error-message {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  margin-top: 5px;
+  display: block;
+  position: absolute;
+}
+
+#password-rules-container {
+  display: none !important;
+}
+
+
+.cta-button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 10px;
+}
+
+.cta-button:hover {
+  background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(106, 76, 147, 0.4);
+}
+
+.login-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-link {
+  color: var(--secondary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.login-link:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+/* Password toggle eyes */
+#psw-input + .fakepasswordicon,
+#confirm-password + .fakepasswordicon,
+.toggle-eye {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.3s ease;
+  font-size: 1.1rem;
+}
+
+/* Specific adjustment for confirm password eye */
+#confirm-password + .fakepasswordicon {
+  top: 35%;
+}
+
+.password-toggle:hover {
+  color: var(--secondary-color);
+}
+
+#password-rules-container {
+  margin-top: 8px;
+}
+
+
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .login-form-box {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+  
+  .signup-container {
+    padding: 10px;
+  }
+  
+  .logo img {
+    height: 70px;
+  }
+  
+  .tagline {
+    font-size: 0.9rem;
+  }
+}
+</style>
+
+<%- include('./partials/footer') %>
+
+
+    <!-- JS
+============================================ -->
+    <!-- Modernizer JS -->
+    <script src="assets/js/vendor/modernizr.min.js"></script>
+    <!-- jQuery JS -->
+    <script src="assets/js/vendor/jquery.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="assets/js/vendor/popper.min.js"></script>
+    <script src="assets/js/vendor/bootstrap.min.js"></script>
+    <script src="assets/js/vendor/slick.min.js"></script>
+    <script src="assets/js/vendor/js.cookie.js"></script>
+    <!-- <script src="assets/js/vendor/jquery.style.switcher.js"></script> -->
+    <script src="assets/js/vendor/jquery-ui.min.js"></script>
+    <script src="assets/js/vendor/jquery.ui.touch-punch.min.js"></script>
+    <script src="assets/js/vendor/jquery.countdown.min.js"></script>
+    <script src="assets/js/vendor/sal.js"></script>
+    <script src="assets/js/vendor/jquery.magnific-popup.min.js"></script>
+    <script src="assets/js/vendor/imagesloaded.pkgd.min.js"></script>
+    <script src="assets/js/vendor/isotope.pkgd.min.js"></script>
+    <script src="assets/js/vendor/counterup.js"></script>
+    <script src="assets/js/vendor/waypoints.min.js"></script>
+
+    <!-- Main JS -->
+    <script src="assets/js/main.js"></script>

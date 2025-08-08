@@ -1,0 +1,288 @@
+<%- include('./partials/header') %>
+
+<div class="wrapper">
+  <%- include('./partials/adminHeader') %>
+  <%- include('./partials/sidebar') %>
+
+  <!-- ==================================================== -->
+  <!-- Start right Content here -->
+  <!-- ==================================================== -->
+  <div>
+    <div class="page-content">
+      <!-- Start Container Fluid -->
+      <div class="container-xxl">
+        <div class="row">
+          <div class="col-xl-12">
+            <div class="card">
+              <div class="d-flex card-header justify-content-between align-items-center">
+                <div>
+                  <h4 class="card-title">All Order List</h4>
+                </div>
+                <div class="dropdown">
+                  <a href="#" class="dropdown-toggle btn btn-sm btn-outline-light rounded" data-bs-toggle="dropdown" aria-expanded="false">
+                    This Month
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-end">
+                    <a href="#!" class="dropdown-item">Download</a>
+                    <a href="#!" class="dropdown-item">Export</a>
+                    <a href="#!" class="dropdown-item">Import</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table align-middle mb-0 table-hover table-centered">
+                    <thead class="bg-light-subtle">
+                      <tr>
+                        <th>Order ID</th>
+                        <th>Created at</th>
+                        <th>Customer ID</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Payment Status</th>
+                        <th>Order Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (orders.length > 0) { %>
+                        <% orders.forEach(order => { %>
+                          <tr>
+                            <td><%= order.orderId %></td>
+                            <td><%= order.createdAt.toLocaleDateString('en-IN') %></td>
+                            <td>
+                              <a href="/admin/user-details?id=<%= order.userId._id %>"><%= order.userId.userId %></a>
+                            </td>
+                            <td>
+                              <ul class="list-unstyled mb-0">
+                               <% order.items.forEach(item => { %>
+                                <li>
+                                  <%= (item.productId && item.productId.name ? item.productId.name : 'Product') %> x <%= item.quantity %> - ₹<%= item.subtotal.toFixed(2) %>
+                                </li>
+                              <% }) %>
+
+                              </ul>
+                            </td>
+                            <td>₹<%= order.total.toFixed(2) %></td>
+                            <td><%= order.paymentStatus %></td>
+                             <td>
+                               <form class="update-order-form" data-order-id="<%= order._id %>" style="display: flex; gap: 10px; align-items: center;">
+                                  <select name="status" class="status-dropdown" style="padding: 6px 10px; border-radius: 5px; border: 1px solid #ccc;">
+                                    <option value="Pending" <%= order.status?.toLowerCase() === 'pending' ? 'selected' : '' %>>Pending</option>
+                                    <option value="Processing" <%= order.status?.toLowerCase() === 'processing' ? 'selected' : '' %>>Processing</option>
+                                    <option value="Shipped" <%= order.status?.toLowerCase() === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                                    <option value="Delivered" <%= order.status?.toLowerCase() === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                                  </select>
+                                  <button type="submit" style="background-color: #2196F3; color: white; border: none; padding: 6px 14px; border-radius: 5px; cursor: pointer;">
+                                    Update
+                                  </button>
+                                </form>
+                                <!-- 👁️ New column for eye icon -->
+                                <td>
+                                  <!-- <a 
+  href="/admin/order-details/<%= order._id %>" 
+  class="btn btn-sm btn-outline-info" 
+  title="View Order Details"
+>
+  <i class="fas fa-eye"></i>
+</a> -->
+                                  <button 
+                                    class="btn btn-sm btn-outline-info view-user-btn"
+                                    data-user='<%- JSON.stringify(order.userId) %>'
+                                    data-address='<%- JSON.stringify(order.userId.address || []) %>'
+                                  >
+                                    <i class="fas fa-eye"></i>
+                                  </button>
+                                </td>
+                              </td>
+                          </tr>
+                        <% }) %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="9" class="text-center">No orders found</td>
+                        </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- end table-responsive -->
+              </div>
+
+              <div class="card-footer border-top">
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-end mb-0">
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">Previous</a></li>
+                    <li class="page-item active"><a class="page-link" href="javascript:void(0);">1</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">3</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">Next</a></li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Container Fluid -->
+       <!-- User Detail Modal -->
+        <div class="modal fade" id="userDetailModal" tabindex="-1" aria-labelledby="userDetailModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="userDetailModalLabel">User Address Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="userDetailContent">
+                <!-- Address details will be injected here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      <!-- ========== Footer End ========== -->
+    </div>
+    <!-- ==================================================== -->
+    <!-- End Page Content -->
+    <!-- ==================================================== -->
+
+    <%- include('./partials/footer') %>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('.update-order-form').forEach(form => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const orderId = form.getAttribute('data-order-id');
+        const status = form.querySelector('.status-dropdown').value;
+        const button = form.querySelector('button[type="submit"]');
+
+        // Add loading effect to the button
+        button.disabled = true;
+        const originalText = button.textContent;
+        button.textContent = 'Updating...';
+        button.style.opacity = '0.6';
+        button.style.transition = 'opacity 0.3s ease';
+
+        try {
+          const res = await fetch('/admin/update-order-status', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ orderId, status })
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            // ✅ Success message popup
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = data.message || "Order status updated successfully!";
+            Object.assign(messageDiv.style, {
+              position: "fixed",
+              top: "20px",
+              right: "20px",
+              backgroundColor: "#4CAF50",
+              color: "#fff",
+              padding: "12px 20px",
+              borderRadius: "6px",
+              boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
+              fontSize: "16px",
+              zIndex: "9999",
+              opacity: "1",
+              transition: "opacity 0.3s ease"
+            });
+            document.body.appendChild(messageDiv);
+
+            setTimeout(() => {
+              messageDiv.style.opacity = '0';
+              setTimeout(() => {
+                messageDiv.remove();
+                window.location.reload();
+              }, 300);
+            }, 2000);
+          } else {
+            alert(data.message || "Failed to update status.");
+          }
+
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Something went wrong.");
+        } finally {
+          // Revert button
+          button.disabled = false;
+          button.textContent = originalText;
+          button.style.opacity = '1';
+        }
+      });
+    });
+     // New: View user address popup
+   document.querySelectorAll('.view-user-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const user = JSON.parse(button.getAttribute('data-user'));
+        const address = JSON.parse(button.getAttribute('data-address'));
+        const shipping = address[0]?.shipping || {};
+        const billing = address[0]?.billing || {};
+
+        const content = `
+          <div class="container">
+            <div class="row g-4">
+              <!-- Billing Address -->
+              <div class="col-md-6">
+                <div class="card shadow-sm border-0 h-100">
+                  <div class="card-body">
+                    <h5 class="card-title border-bottom pb-2 mb-3">Billing Address</h5>
+                    <ul class="list-unstyled lh-lg">
+                      <li><strong>Name:</strong> ${user.name || 'N/A'}</li>
+                      <li><strong>Email:</strong> ${user.email || 'N/A'}</li>
+                      <li><strong>Phone:</strong> ${shipping.phone || 'N/A'}</li>
+                      ${shipping.addressLine ? `
+                        <li class="mt-3">
+                          ${shipping.addressLine}<br>
+                          ${shipping.city}<br>
+                          ${shipping.state}<br>
+                          ${shipping.country}<br>
+                          ${shipping.pincode}
+                        </li>` : `<li class="mt-3 text-danger">No billing address available.</li>`}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Shipping Address -->
+              <div class="col-md-6">
+                <div class="card shadow-sm border-0 h-100">
+                  <div class="card-body">
+                    <h5 class="card-title border-bottom pb-2 mb-3">Shipping Address</h5>
+                    <ul class="list-unstyled lh-lg">
+                      <li><strong>Email:</strong> ${user.email || 'N/A'}</li>
+                      ${shipping.addressLine ? `
+                        <li class="mt-3">
+                          ${shipping.name || ''}<br>
+                          ${shipping.addressLine}<br>
+                          ${shipping.city}<br>
+                          ${shipping.state}<br>
+                          ${shipping.country}<br>
+                          ${shipping.pincode}<br>
+                          ${shipping.phone}
+                        </li>` : `<li class="mt-3 text-danger">No shipping address available.</li>`}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('userDetailContent').innerHTML = content;
+        const modal = new bootstrap.Modal(document.getElementById('userDetailModal'));
+        modal.show();
+      });
+    });
+  });
+</script>
+

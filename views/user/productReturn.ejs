@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Return Product</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary-color: #ff4757;
+      --primary-dark: #e84118;
+      --text-color: #2f3542;
+      --light-bg: #f8f9fa;
+      --border-color: #dfe4ea;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text-color);
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+    }
+    
+    .return-card {
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+    
+    .card-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      border-bottom: none;
+    }
+    
+    .card-body {
+      padding: 2rem;
+    }
+    
+    .form-label {
+      font-weight: 500;
+      color: #57606f;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(255, 71, 87, 0.2);
+    }
+    
+    textarea.form-control {
+      min-height: 120px;
+    }
+    
+    .btn-return {
+      background-color: var(--primary-color);
+      border: none;
+      border-radius: 10px;
+      padding: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-return:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    
+    .return-note {
+      font-size: 0.85rem;
+      color: #747d8c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+    
+    .file-upload {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+    
+    .file-upload-btn {
+      border: 1px dashed #ced6e0;
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+    }
+    
+    .file-upload-btn:hover {
+      border-color: var(--primary-color);
+      background-color: rgba(255, 71, 87, 0.05);
+    }
+    
+    .file-upload-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    
+    .file-upload-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: #57606f;
+    }
+    
+    .file-upload-text i {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+    
+    .error-message {
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+    
+    @media (max-width: 576px) {
+      .card-body {
+        padding: 1.5rem;
+      }
+      
+      .card-header {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container py-5">
+    <div class="return-card mx-auto" style="max-width: 600px;">
+      <div class="card-header">
+        <h3 class="mb-0"><i class="fas fa-exchange-alt me-2"></i> Return Product Request</h3>
+      </div>
+      <div class="card-body">
+        <form id="returnForm">
+          <!-- Order ID -->
+          <div class="mb-4">
+            <label for="orderId" class="form-label">Order ID</label>
+            <input type="text" class="form-control" id="orderId" name="orderId" required>
+          </div>
+
+          <!-- Product Name -->
+          <div class="mb-4">
+            <label for="productName" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="productName" name="productName" required>
+          </div>
+
+          <!-- Date of Product Received -->
+          <div class="mb-4">
+            <label for="receivedDate" class="form-label">Date of Product Received</label>
+            <input type="date" class="form-control" id="receivedDate" name="receivedDate" required>
+            <div id="dateError" class="error-message text-danger d-none">
+              <i class="fas fa-exclamation-circle me-1"></i> Return period has expired. Only returns within 7 days are allowed.
+            </div>
+          </div>
+
+          <!-- Reason -->
+          <div class="mb-4">
+            <label for="reason" class="form-label">Reason for Return</label>
+            <select class="form-select" id="reason" name="reason" required>
+              <option value="" disabled selected>Select a reason</option>
+              <option>Damaged product</option>
+              <option>Wrong item delivered</option>
+              <option>Not as described</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <!-- Additional Description -->
+          <div class="mb-4">
+            <label for="description" class="form-label">Additional Details (optional)</label>
+            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+          </div>
+
+          <!-- Upload Image -->
+          <div class="mb-4">
+            <label class="form-label">Upload Image (optional)</label>
+            <div class="file-upload">
+              <label class="file-upload-btn">
+                <input type="file" id="image" name="image" class="file-upload-input">
+                <div class="file-upload-text">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <span>Click to upload or drag and drop</span>
+                  <small class="text-muted">PNG, JPG up to 5MB</small>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-return py-3">
+              <i class="fas fa-paper-plane me-2"></i> Submit Return Request
+            </button>
+          </div>
+
+          <div class="return-note">
+            <i class="fas fa-info-circle"></i>
+            <span>Return requests are allowed only within 7 days of receiving the product.</span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function isReturnValid() {
+      const receivedDate = new Date(document.getElementById('receivedDate').value);
+      const today = new Date();
+      const diffTime = today - receivedDate;
+      const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+      const dateError = document.getElementById('dateError');
+      if (diffDays > 7) {
+        dateError.classList.remove('d-none');
+        return false;
+      }
+      dateError.classList.add('d-none');
+      return true;
+    }
+
+    document.getElementById('returnForm').addEventListener('submit', async function (e) {
+      e.preventDefault(); // Prevent default form submission
+
+      if (!isReturnValid()) return;
+
+      const form = document.getElementById('returnForm');
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('/return', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          alert("Return request submitted successfully!");
+
+          // ✅ Redirect explicitly using the redirect URL from response
+          if (result.redirect) {
+            window.location.href = result.redirect;
+          } else {
+            window.location.href = '/account'; // fallback
+          }
+        } else {
+          alert("Failed to submit return request. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred while submitting the form.");
+      }
+    });
+
+    // File upload styling
+    const fileInput = document.getElementById('image');
+    const fileUploadText = document.querySelector('.file-upload-text span');
+
+    fileInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        fileUploadText.textContent = this.files[0].name;
+      } else {
+        fileUploadText.textContent = 'Click to upload or drag and drop';
+      }
+    });
+  </script>
+</body>
+</html>

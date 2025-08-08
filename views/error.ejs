@@ -1,0 +1,158 @@
+<section class="error-page light-theme-error">
+    <div class="container">
+        <div class="error-content-wrapper">
+            <div class="row align-items-center">
+                <div class="col-lg-6 order-lg-1 order-2">
+                    <div class="error-content" data-sal="slide-up" data-sal-duration="800" data-sal-delay="400">
+                        <span class="error-badge">
+                            <i class="fas fa-exclamation-circle"></i> Oops! Something's missing.
+                        </span>
+                        <h1 class="error-title">Page not found</h1>
+                        <p class="error-description">It seems like we don't find what you searched. The page you were looking for doesn't exist, isn't available, or is loading incorrectly.</p>
+                        <a href="/" class="error-btn">
+                            Back To Home <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 order-lg-2 order-1">
+                    <div class="error-image" data-sal="zoom-in" data-sal-duration="800" data-sal-delay="400">
+                        <img src="assets/images/others/404.png" alt="404 Error" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<style>
+/* Light Theme Error Page Styles */
+.light-theme-error {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.error-content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.error-content {
+    padding: 30px;
+}
+
+.error-badge {
+    display: inline-block;
+    background-color: #fff4e5;
+    color: #ff9500;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.error-badge i {
+    margin-right: 8px;
+}
+
+.error-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.error-description {
+    font-size: 18px;
+    color: #4a5568;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.error-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: #4f46e5;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.1);
+}
+
+.error-btn:hover {
+    background-color: #4338ca;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(79, 70, 229, 0.15);
+    color: white;
+}
+
+.error-btn i {
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+}
+
+.error-btn:hover i {
+    transform: translateX(3px);
+}
+
+.error-image img {
+    max-width: 100%;
+    height: auto;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .error-title {
+        font-size: 40px;
+    }
+    
+    .error-description {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .light-theme-error {
+        padding: 60px 0;
+    }
+    
+    .error-content {
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .error-title {
+        font-size: 36px;
+    }
+    
+    .error-image {
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 576px) {
+    .error-title {
+        font-size: 32px;
+    }
+    
+    .error-btn {
+        padding: 10px 20px;
+    }
+}
+</style>

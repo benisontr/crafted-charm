@@ -1,0 +1,179 @@
+<%- include('./partials/header') %>
+    <div class="wrapper">
+        <%- include('./partials/adminHeader') %>
+            <%- include('./partials/sidebar') %>
+
+                <!-- ==================================================== -->
+                <!-- Start right Content here -->
+                <!-- ==================================================== -->
+                <div class="page-content">
+                    <!-- Start Container Fluid -->
+                    <div class="container-xxl">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 ">
+                                <!-- SLIDER IMAGE FORM -->
+                                <form id="sliderForm" enctype="multipart/form-data">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Edit Slider Images</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row g-4">
+<% if (homeEdits && homeEdits.sliderImages) { %>
+  <% const sliders = homeEdits.sliderImages; %>
+  <% [1, 2, 3, 4].forEach((num) => { 
+       const img = sliders[`slider${num}`];
+  %>
+    <div class="col-md-3 text-center">
+      <label class="form-label d-block mb-2">Slider <%= num %></label>
+      <% if (img) { %>
+        <img id="preview<%= num %>" src="<%= img %>" class="img-fluid border rounded mb-2" style="width: 250px; height: 250px;" />
+      <% } else { %>
+        <p class="text-muted">Image not found</p>
+      <% } %>
+      <input type="file" name="sliderImage<%= num %>" class="form-control mb-2 image-input" data-preview="preview<%= num %>" accept="image/*" />
+      <small class="text-muted">Leave empty to keep current</small>
+    </div>
+  <% }) %>
+<% } %>
+
+</div>
+
+
+
+                                        </div>
+                                    </div>
+                                    <div class="p-3 bg-light mb-3 rounded">
+                                        <div class="row justify-content-end g-2">
+                                            <div class="col-lg-2">
+                                                <button type="submit"
+                                                    class="btn btn-outline-secondary w-100">Update</button>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <a href="/admin/home-editor" class="btn btn-primary w-100">Cancel</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <!-- OFFER TAGLINE FORM -->
+                                <form id="taglineForm">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Offer Tagline</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="mb-3">
+                                                        <input type="text" id="taglineInput" name="tagline"
+                                                            class="form-control"
+                                                            placeholder="Write a catchy tagline for your offer"
+                                                            value="<%= homeEdits.offerTag %>" required />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 bg-light mb-3 rounded">
+                                        <div class="row justify-content-end g-2">
+                                            <div class="col-lg-2">
+                                                <button type="submit"
+                                                    class="btn btn-outline-secondary w-100">Update</button>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <a href="/admin/home-editor" class="btn btn-primary w-100">Cancel</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                    <%- include('./partials/footer') %>
+                </div>
+    </div>
+
+    <script>
+        document.querySelectorAll(".image-input").forEach((input) => {
+            input.addEventListener("change", function () {
+                const previewId = this.dataset.preview;
+                const previewImg = document.getElementById(previewId);
+
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImg.src = e.target.result;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        });
+    </script>
+
+<script>
+document.getElementById("sliderForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData();
+
+    // Append only changed files
+    document.querySelectorAll(".image-input").forEach((input, index) => {
+        const file = input.files[0];
+        if (file) {
+            formData.append(`sliderImage${index + 1}`, file);
+        }
+    });
+
+    try {
+        const response = await fetch("/admin/update-slider", {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert("Slider updated successfully!");
+            location.reload();
+        } else {
+            alert(result.message || "Something went wrong");
+        }
+    } catch (err) {
+        console.error("Update failed:", err);
+        alert("Error occurred while updating.");
+    }
+});
+</script>
+
+<script>
+document.getElementById("taglineForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const tagline = document.getElementById("taglineInput").value.trim();
+
+  try {
+    const response = await fetch("/admin/update-offer-tag", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ tagline })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      alert("Offer tagline updated successfully!");
+      location.reload(); // or redirect as needed
+    } else {
+      alert(result.message || "Update failed.");
+    }
+  } catch (error) {
+    console.error("Error updating tagline:", error);
+    alert("Something went wrong while updating the offer tagline.");
+  }
+});
+</script>
+

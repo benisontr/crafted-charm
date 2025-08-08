@@ -1,0 +1,141 @@
+<%- include('./partials/header') %>
+<%- include('./partials/userHeader') %>
+
+<div class="container my-5">
+    <div class="card border-0 rounded-lg overflow-hidden">
+        <div class="card-header bg-white py-4 border-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0 font-weight-bold text-primary" style="font-family: 'Poppins', sans-serif;">Order #<%= order.orderId %></h2>
+                <span class="badge badge-<%= order.status === 'Delivered' ? 'success' : (order.status === 'Cancelled' ? 'danger' : 'warning') %> py-2 px-3 rounded-pill" style="font-size: 0.9rem; font-family: 'Poppins', sans-serif;">
+                    <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                </span>
+            </div>
+            <p class="text-muted mb-0 mt-2" style="font-family: 'Open Sans', sans-serif;">
+                Placed on <%= order.createdAt.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %>
+            </p>
+        </div>
+        
+        <div class="card-body p-4 p-md-5">
+            <!-- Products List -->
+            <div class="mb-5">
+                <h4 class="mb-4 text-dark" style="font-family: 'Poppins', sans-serif; font-weight: 600;">Order Items</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="bg-light">
+                            <tr style="font-family: 'Open Sans', sans-serif;">
+                                <th class="border-0">Product</th>
+                                <th class="border-0 text-right">Price</th>
+                                <th class="border-0 text-center">Qty</th>
+                                <th class="border-0 text-right">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% order.items.forEach(item=> { %>
+                                <tr style="font-family: 'Open Sans', sans-serif;">
+                                    <td class="align-middle">
+                                        <div class="d-flex align-items-center">
+                                            <img src="<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" 
+                                                class="rounded mr-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                            <div>
+                                                <h6 class="mb-0 text-dark" style="font-family: 'Poppins', sans-serif;"><%= item.productId.name %></h6>
+                                                <small class="text-muted">ID: <%= item.productId.productId %></small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-right">₹<%= item.price.toFixed(2) %></td>
+                                    <td class="align-middle text-center"><%= item.quantity %></td>
+                                    <td class="align-middle text-right">₹<%= (item.price * item.quantity).toFixed(2) %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Shipping Address -->
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="bg-light p-4 rounded-lg h-100">
+                        <h5 class="mb-3 text-dark" style="font-family: 'Poppins', sans-serif; font-weight: 600;">Shipping Address</h5>
+                        <% if (order && order.address) { %>
+                            <address style="font-family: 'Open Sans', sans-serif;">
+                                <strong><%= order.address.name %></strong><br>
+                                <%= order.address.line %><br>
+                                <%= order.address.city %>, <%= order.address.state %> - <%= order.address.pincode %><br>
+                                <%= order.address.country || '' %><br>
+                                <abbr title="Phone" class="text-dark">P:</abbr> <%= order.address.phone %><br>
+                                <abbr title="Email" class="text-dark">E:</abbr> <%= order.address.email %>
+                            </address>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Payment Summary -->
+                <div class="col-lg-6">
+                    <div class="bg-light p-4 rounded-lg h-100">
+                        <h5 class="mb-3 text-dark" style="font-family: 'Poppins', sans-serif; font-weight: 600;">Payment Summary</h5>
+                        <dl class="row mb-0" style="font-family: 'Open Sans', sans-serif;">
+                            <dt class="col-sm-6">Payment Method</dt>
+                            <dd class="col-sm-6 text-right"><%= order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1) %></dd>
+
+                            <dt class="col-sm-6">Subtotal</dt>
+                            <dd class="col-sm-6 text-right">₹<%= (order.total - order.shippingCharge + order.discount).toFixed(2) %></dd>
+
+                            <dt class="col-sm-6">Shipping</dt>
+                            <dd class="col-sm-6 text-right">₹<%= order.shippingCharge.toFixed(2) %></dd>
+
+                            <dt class="col-sm-6">Discount</dt>
+                            <dd class="col-sm-6 text-right text-success">-₹<%= order.discount.toFixed(2) %></dd>
+
+                            <dt class="col-sm-6 mt-3 text-dark" style="font-size: 1.1rem;">Total</dt>
+                            <dd class="col-sm-6 mt-3 text-right text-dark" style="font-size: 1.1rem; font-weight: 600;">₹<%= order.total.toFixed(2) %></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <% if (order.status !== 'Delivered' && order.status !== 'Cancelled') { %>
+                <div class="text-right mt-4">
+                    <form action="/confirm-delivery/<%= order._id %>" method="POST">
+                        <button type="submit" class="btn btn-success px-4 py-2" style="font-family: 'Poppins', sans-serif;">
+                            Confirmation : Product Received
+                        </button>
+                    </form>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+<style>
+    body {
+        font-family: 'Open Sans', sans-serif;
+        color: #4a4a4a;
+        background-color: #f8f9fa;
+    }
+    h1, h2, h3, h4, h5, h6, .font-heading {
+        font-family: 'Poppins', sans-serif;
+    }
+    .card {
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.03);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.08);
+    }
+    .table th {
+        border-top: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.75rem;
+    }
+    .bg-light {
+        background-color: #f8fafc !important;
+    }
+    .rounded-lg {
+        border-radius: 0.75rem !important;
+    }
+</style>

@@ -1,0 +1,201 @@
+<%- include('./partials/header') %>
+<%- include('./partials/userHeader') %>
+
+<div class="privacy-policy-section">
+  <div class="container">
+    <div class="privacy-policy-container">
+      <div class="privacy-content">
+
+        <h2 class="privacy-main-title">Privacy Policy</h2>
+        <p class="privacy-paragraph">At <strong> Crafted Charm</strong>, your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or make a purchase with us.</p>
+
+        <h3 class="privacy-section-title">Information We Collect</h3>
+        <ul class="privacy-feature-list">
+          <li class="privacy-list-item"><span class="list-highlight">Personal Information:</span> Name, email address, phone number, billing/shipping address, and payment details when you place an order.</li>
+          <li class="privacy-list-item"><span class="list-highlight">Technical Information:</span> IP address, browser type, pages visited, and other analytics data collected through cookies.</li>
+        </ul>
+
+        <h3 class="privacy-section-title">How We Use Your Information</h3>
+        <ul class="privacy-feature-list">
+          <li class="privacy-list-item">To process and fulfill your orders.</li>
+          <li class="privacy-list-item">To communicate with you about your purchases or inquiries.</li>
+          <li class="privacy-list-item">To send updates, offers, and promotional content <span class="parenthetical">(only with your consent)</span>.</li>
+          <li class="privacy-list-item">To improve our website, customer service, and shopping experience.</li>
+        </ul>
+
+        <h3 class="privacy-section-title">Sharing of Information</h3>
+        <p class="privacy-paragraph">We do not sell, rent, or trade your personal information. Your data may be shared with trusted service providers solely for order processing, delivery, and marketing <span class="parenthetical">(with consent)</span>.</p>
+
+        <h3 class="privacy-section-title">Data Security</h3>
+        <p class="privacy-paragraph">We use secure technologies and follow best practices to protect your personal information. However, no method of transmission over the internet is 100% secure.</p>
+
+        <h3 class="privacy-section-title">Your Rights</h3>
+        <ul class="privacy-feature-list">
+          <li class="privacy-list-item">You can request access to the personal data we hold about you.</li>
+          <li class="privacy-list-item">You may update, correct, or delete your information by contacting us.</li>
+          <li class="privacy-list-item">You can opt-out of promotional emails at any time.</li>
+        </ul>
+
+        <h3 class="privacy-section-title">Cookies</h3>
+        <p class="privacy-paragraph">Our website uses cookies to enhance your browsing experience. You can choose to disable cookies through your browser settings, but this may affect site functionality.</p>
+
+        <h3 class="privacy-section-title">Third-party Links</h3>
+        <p class="privacy-paragraph">Our website may contain links to third-party websites. We are not responsible for their privacy practices and encourage you to review their policies before sharing information.</p>
+
+        <h3 class="privacy-section-title">Policy Updates</h3>
+        <p class="privacy-paragraph">We may update this Privacy Policy from time to time. Any changes will be posted on this page with the revised effective date.</p>
+
+        <h3 class="privacy-section-title">Contact Us</h3>
+        <p class="privacy-paragraph">If you have any questions or concerns regarding this policy, feel free to contact us at <a href="mailto:craftedcharm.luck@gmail.com" class="contact-email">craftedcharm.luck@gmail.com</a>.</p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+<style>
+/* Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap');
+
+/* Privacy Policy Styling */
+.privacy-policy-section {
+  padding: 70px 0;
+  background: #fafafa;
+  font-family: 'DM Sans', sans-serif;
+  color: #4a4e57;
+  line-height: 1.7;
+}
+
+.privacy-policy-container {
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.privacy-content {
+  background: #ffffff;
+  padding: 50px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+}
+
+.privacy-main-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2b2d42;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f2f5;
+  letter-spacing: -0.5px;
+}
+
+.privacy-section-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2b2d42;
+  margin: 40px 0 20px;
+  letter-spacing: -0.3px;
+}
+
+.privacy-paragraph {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: #4a4e57;
+  margin-bottom: 25px;
+  line-height: 1.8;
+}
+
+.privacy-feature-list {
+  padding-left: 0;
+  margin-bottom: 30px;
+  list-style-type: none;
+}
+
+.privacy-list-item {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: #4a4e57;
+  margin-bottom: 12px;
+  padding-left: 32px;
+  position: relative;
+  line-height: 1.8;
+}
+
+.privacy-list-item:before {
+  content: "•";
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.8rem;
+  color: #5e72e4;
+  position: absolute;
+  left: 0;
+  top: -5px;
+}
+
+.list-highlight {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  color: #2b2d42;
+}
+
+.parenthetical {
+  font-family: 'DM Sans', sans-serif;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.contact-email {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  color: #5e72e4;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-bottom: 1px dashed #a3bffa;
+  padding-bottom: 2px;
+}
+
+.contact-email:hover {
+  color: #4c51bf;
+  border-bottom-color: #5e72e4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .privacy-content {
+    padding: 35px 25px;
+  }
+  
+  .privacy-main-title {
+    font-size: 2rem;
+    margin-bottom: 25px;
+  }
+  
+  .privacy-section-title {
+    font-size: 1.4rem;
+    margin: 35px 0 18px;
+  }
+  
+  .privacy-paragraph,
+  .privacy-list-item {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .privacy-policy-section {
+    padding: 50px 0;
+  }
+  
+  .privacy-main-title {
+    font-size: 1.8rem;
+  }
+  
+  .privacy-list-item {
+    padding-left: 28px;
+  }
+}
+</style>

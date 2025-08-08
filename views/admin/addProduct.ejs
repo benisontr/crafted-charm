@@ -1,0 +1,210 @@
+<%- include('./partials/header') %>
+<div class="wrapper">
+  <%- include('./partials/adminHeader') %>
+  <%- include('./partials/sidebar') %>
+
+  <div class="page-content">
+    <div class="container-xxl">
+      <div class="row">
+        <div class="col-xl-12 col-lg-12">
+          <form id="CategoryForm" action="/admin/add-product" method="post" enctype="multipart/form-data">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Add Product Photos</h4>
+              </div>
+              <div class="card-body">
+                <input type="file" name="thumbnail[]" class="filepond" multiple
+                  data-max-file-size="3MB" data-max-files="5"
+                  accept="image/png, image/jpeg, image/gif" required />
+                <small class="text-muted fs-13 d-block mt-2">
+                  1600 x 1200 (4:3) recommended. PNG and JPG files are allowed.
+                </small>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Product Information</h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="productId" class="form-label">Product ID</label>
+                      <input type="text" id="productId" name="productId" class="form-control" disabled
+                        value="<%= productId %>">
+                      <input type="hidden" name="productId" value="<%= productId %>">
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="categoryId" class="form-label">Select Category</label>
+                      <select id="categoryId" name="categoryId" class="form-select" required>
+                        <option value="">-- Choose a Category --</option>
+                        <% categories.forEach(category => { %>
+                          <option value="<%= category._id %>"><%= category.name %></option>
+                        <% }) %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-8">
+                    <div class="mb-3">
+                      <label for="product-name" class="form-label">Product Name</label>
+                      <input type="text" name="name" id="product-name" class="form-control"
+                        placeholder="Item Name" required>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="mb-3">
+                      <label for="productCode" class="form-label">Product Code</label>
+                      <input type="text" name="productCode" id="productCode" class="form-control" placeholder="Product Code">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="stock" class="form-label">Total Stock</label>
+                      <input type="number" name="stock" id="stock" class="form-control" placeholder="Stock" value="0">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="lowStockLimit" class="form-label">Low Stock Alert</label>
+                      <input type="number" name="lowStockLimit" id="lowStockLimit" class="form-control" placeholder="Low stock alert" value="0">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="mb-3">
+                      <label for="description" class="form-label">Description</label>
+                      <textarea class="form-control bg-light-subtle" name="description" id="description" rows="7"
+                        placeholder="Short description about the product" required></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Pricing Details</h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <label for="price" class="form-label">Price</label>
+                    <div class="input-group mb-3">
+                      <span class="input-group-text fs-15">Rs: </span>
+                      <input type="number" name="price" id="price" class="form-control" placeholder="000" required>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6">
+                    <label for="discount" class="form-label">Discount Price</label>
+                    <div class="input-group mb-3">
+                      <span class="input-group-text fs-20"><i class='bx bxs-discount'></i></span>
+                      <input type="number" name="discount" id="discount" class="form-control" placeholder="000">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Availability</h4>
+              </div>
+              <div class="card-body">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" name="isAvailable" id="isAvailable" checked>
+                  <label class="form-check-label" for="isAvailable">Product is available</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-3 bg-light mb-3 rounded">
+              <div class="row justify-content-end g-2">
+                <div class="col-lg-2">
+                  <button type="submit" class="btn btn-outline-secondary w-100">Create Product</button>
+                </div>
+                <div class="col-lg-2">
+                  <button type="reset" class="btn btn-primary w-100">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <%- include('./partials/footer') %>
+  </div>
+</div>
+
+<!-- FilePond Styles -->
+<link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
+
+<!-- FilePond Scripts -->
+<script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
+<script>
+  FilePond.registerPlugin(FilePondPluginImagePreview);
+
+  const pond = FilePond.create(document.querySelector('.filepond'), {
+    allowMultiple: true,
+    maxFiles: 5,
+    imagePreviewHeight: 170,
+    acceptedFileTypes: ['image/png', 'image/jpeg', 'image/gif'],
+    labelIdle: 'Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("CategoryForm");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      // Add FilePond files
+      pond.getFiles().forEach(fileItem => {
+        formData.append("thumbnail[]", fileItem.file);
+      });
+
+      fetch(form.action, {
+        method: "POST",
+        body: formData,
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Success:", data);
+          alert("Product added successfully!");
+          window.location.href="/admin/list-product";
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          alert("Failed to add product.");
+        });
+    });
+  });
+</script>
+
+<style>
+  .filepond--item {
+    width: calc(25% - 0.5em);
+  }
+
+  .filepond--list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+</style>

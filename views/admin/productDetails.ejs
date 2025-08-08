@@ -1,0 +1,503 @@
+<%- include('./partials/header') %>
+     <!-- START Wrapper -->
+     <div class="wrapper">
+          <%- include('./partials/adminHeader') %>
+               <%- include('./partials/sidebar') %>
+                    <div class="page-content">
+
+                         <!-- Start Container Fluid -->
+                         <div class="container-xxl">
+
+                              <div class="row">
+                                   <div class="col-lg-4">
+                                        <div class="card">
+                                             <div class="card-body">
+                                                  <!-- Crossfade Carousel -->
+                                                  <!-- <div id="carouselExampleFade" class="carousel slide carousel-fade"
+                                                       data-bs-ride="carousel">
+                                                       <div class="carousel-inner" role="listbox">
+                                                            <% if (product.images && product.images.length> 0) { %>
+                                                                 <% product.images.forEach((image, index)=> { %>
+                                                                      <div
+                                                                           class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                                                                           <img src="/<%= image %>"
+                                                                                alt="Product Image <%= index+1 %>"
+                                                                                class="img-fluid bg-light rounded">
+                                                                      </div>
+                                                                      <% }); %>
+                                                                           <% } else { %>
+                                                                                <div class="carousel-item active">
+                                                                                     <img src="/assets/images/no-image.png"
+                                                                                          class="img-fluid bg-light rounded"
+                                                                                          alt="No Image Available">
+                                                                                </div>
+                                                                                <% } %>
+                                                       </div>
+
+                                                       <div
+                                                            class="carousel-indicators m-0 mt-2 d-lg-flex d-none position-static h-100">
+                                                            <% product.images.forEach((image, index)=> { %>
+                                                                 <button type="button"
+                                                                      data-bs-target="#carouselExampleFade"
+                                                                      data-bs-slide-to="<%= index %>"
+                                                                      class="w-auto h-auto rounded bg-light <%= index === 0 ? 'active' : '' %>"
+                                                                      aria-current="<%= index === 0 ? 'true' : 'false' %>"
+                                                                      aria-label="Slide <%= index + 1 %>">
+                                                                      <img src="/uploads/<%= image %>"
+                                                                           class="d-block avatar-xl"
+                                                                           alt="Thumbnail <%= index+1 %>">
+                                                                 </button>
+                                                                 <% }); %>
+                                                       </div>
+                                                  </div> -->
+                                                  <!-- <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                                         <div class="carousel-inner" role="listbox">
+                                              <div class="carousel-item active">
+                                                   <img src="assets/images/product/p-1.png" alt="" class="img-fluid bg-light rounded">
+                                              </div>
+                                              <div class="carousel-item">
+                                                   <img src="assets/images/product/p-10.png" alt="" class="img-fluid bg-light rounded">
+                                              </div>
+                                              <div class="carousel-item">
+                                                   <img src="assets/images/product/p-13.png" alt="" class="img-fluid bg-light rounded">
+                                              </div>
+                                              <div class="carousel-item">
+                                                   <img src="assets/images/product/p-14.png" alt="" class="img-fluid bg-light rounded">
+                                              </div>
+                                              <a class="carousel-control-prev rounded" href="#carouselExampleFade" role="button" data-bs-slide="prev">
+                                                   <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                   <span class="visually-hidden">Previous</span>
+                                              </a>
+                                              <a class="carousel-control-next rounded" href="#carouselExampleFade" role="button" data-bs-slide="next">
+                                                   <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                   <span class="visually-hidden">Next</span>
+                                              </a>
+                                         </div>
+                                         <div class="carousel-indicators m-0 mt-2 d-lg-flex d-none position-static h-100">
+                                              <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="0" aria-current="true" aria-label="Slide 1" class="w-auto h-auto rounded bg-light active">
+                                                   <img src="assets/images/product/p-1.png" class="d-block avatar-xl" alt="swiper-indicator-img">
+                                              </button>
+                                              <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="1" aria-label="Slide 2" class="w-auto h-auto rounded bg-light">
+                                                   <img src="assets/images/product/p-10.png" class="d-block avatar-xl" alt="swiper-indicator-img">
+                                              </button>
+                                              <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="2" aria-label="Slide 3" class="w-auto h-auto rounded bg-light">
+                                                   <img src="assets/images/product/p-13.png" class="d-block avatar-xl" alt="swiper-indicator-img">
+                                              </button>
+                                              <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="3" aria-label="Slide 3" class="w-auto h-auto rounded bg-light">
+                                                   <img src="assets/images/product/p-14.png" class="d-block avatar-xl" alt="swiper-indicator-img">
+                                              </button>
+                                         </div>
+                                    </div> -->
+                                    <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+  <div class="carousel-inner" role="listbox">
+    <% product.images.forEach((img, index) => { %>
+      <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+        <img src="<%= img %>" alt="Product Image <%= index + 1 %>" class="img-fluid bg-light rounded">
+      </div>
+    <% }) %>
+  </div>
+
+  <!-- Optional carousel controls (uncomment if needed) -->
+  <!--
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+  -->
+
+  <div class="carousel-indicators m-0 mt-2 d-lg-flex d-none position-static h-100">
+    <% product.images.forEach((img, index) => { %>
+      <button type="button"
+              data-bs-target="#carouselExampleFade"
+              data-bs-slide-to="<%= index %>"
+              class="w-auto h-auto rounded bg-light <%= index === 0 ? 'active' : '' %>"
+              aria-label="Slide <%= index + 1 %>">
+        <img src="<%= img %>" class="d-block avatar-xl" alt="indicator-<%= index + 1 %>">
+      </button>
+    <% }) %>
+  </div>
+</div>
+
+                                             </div>
+                                        </div>
+                                   </div>
+
+                                   <div class="col-lg-8">
+                                        <div class="card">
+                                             <div class="card-body">
+                                                  <!-- <h4 class="badge bg-success text-light fs-14 py-1 px-2">New Arrival</h4> -->
+                                                  <p class="mb-1">
+                                                       <a href="#!" class="fs-24 text-dark fw-medium">
+                                                            <%= product.name %>
+                                                       </a>
+                                                  </p>
+                                                  <!-- <div class="d-flex gap-2 align-items-center">
+                                         <ul class="d-flex text-warning m-0 fs-20  list-unstyled">
+                                              <li>
+                                                   <i class="bx bxs-star"></i>
+                                              </li>
+                                              <li>
+                                                   <i class="bx bxs-star"></i>
+                                              </li>
+                                              <li>
+                                                   <i class="bx bxs-star"></i>
+                                              </li>
+                                              <li>
+                                                   <i class="bx bxs-star"></i>
+                                              </li>
+                                              <li>
+                                                   <i class="bx bxs-star-half"></i>
+                                              </li>
+                                         </ul>
+                                         <p class="mb-0 fw-medium fs-18 text-dark">4.5 <span class="text-muted fs-13">(55 Review)</span></p>
+                                    </div> -->
+                                                  <h2 class="fw-medium my-3">Discount Price:₹ <%= product.discount %>
+                                                            <span class="fs-16 text-decoration-line-through">Old Price :
+                                                                  ₹ <%= product.price %></span><small
+                                                                 class="text-danger ms-2"></small></h2>
+
+                                                  <div class="row align-items-center g-2 mt-3">
+                                                       <div class="col-lg-3">
+                                                            <div class="">
+                                                                 <h5 class="text-dark fw-medium">Length : <%= product.length
+                                                                           %> <span class="text-muted"></span></h5>
+                                                                 <!-- <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
+                                                        <input type="checkbox" class="btn-check" id="color-dark2" checked>
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-dark2"> <i class="bx bxs-circle fs-18 text-dark"></i></label>
+           
+                                                        <input type="checkbox" class="btn-check" id="color-yellow2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-yellow2"> <i class="bx bxs-circle fs-18 text-warning"></i></label>
+           
+                                                        <input type="checkbox" class="btn-check" id="color-white2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-white2"> <i class="bx bxs-circle fs-18 text-white"></i></label>
+           
+                                                        <input type="checkbox" class="btn-check" id="color-green2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-green2"> <i class="bx bxs-circle fs-18 text-success"></i></label>
+           
+                                                   </div> -->
+                                                            </div>
+                                                       </div>
+                                                       <div class="col-lg-3">
+                                                            <div class="">
+                                                                 <h5 class="text-dark fw-medium">Blouse Details: <%=
+                                                                           product.blouseDetails %> <span
+                                                                                class="text-muted"></span></h5>
+                                                                 <!-- <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
+                                                        <input type="checkbox" class="btn-check" id="size-s2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-s2">S</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-m2" checked>
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-m2">M</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-xl3">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xl3">Xl</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-xxl3">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xxl3">XXL</label>
+           
+                                                   </div> -->
+                                                            </div>
+                                                       </div>
+                                                  </div>
+
+                                                  <div class="row align-items-center g-2">
+                                                  <div class="col-lg-3">
+                                                       <div class="">
+                                                            <h5 class="text-dark fw-medium">HSN Code : <%=
+                                                                      product.hsnCode %> <span
+                                                                           class="text-muted"></span></h5>
+                                                            <!-- <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
+                                                        <input type="checkbox" class="btn-check" id="color-dark2" checked>
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-dark2"> <i class="bx bxs-circle fs-18 text-dark"></i></label>
+           
+                                                        <input type="checkbox" class="btn-check" id="color-yellow2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-yellow2"> <i class="bx bxs-circle fs-18 text-warning"></i></label>
+           
+                                                        <input type="checkbox" class="btn-check" id="color-white2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-white2"> <i class="bx bxs-circle fs-18 text-white"></i></label>
+           
+                                                        <input type="checkbox" class="btn-check" id="color-green2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-green2"> <i class="bx bxs-circle fs-18 text-success"></i></label>
+           
+                                                   </div> -->
+                                                       </div>
+                                                  </div>
+
+                                                  <div class="col-lg-3">
+                                                       <div class="">
+                                                            <h5 class="text-dark fw-medium">SKu id: <%= product.skuId %>
+                                                                      <span class="text-muted"></span></h5>
+                                                            <!-- <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
+                                                        <input type="checkbox" class="btn-check" id="size-s2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-s2">S</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-m2" checked>
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-m2">M</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-xl3">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xl3">Xl</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-xxl3">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xxl3">XXL</label>
+           
+                                                   </div> -->
+                                                       </div>
+                                                  </div>
+</div>
+
+
+
+  <div class="row align-items-center g-2">
+                                                  <div class="col-lg-3">
+                                                       <div class="">
+                                                            <h5 class="text-dark fw-medium">Fabric : <%=
+                                                                      product.fabric %> <span
+                                                                           class="text-muted"></span></h5>
+                                                            <!-- <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
+                                                        <input type="checkbox" class="btn-check" id="color-dark2" checked>
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-dark2"> <i class="bx bxs-circle fs-18 text-dark"></i></label>
+           
+                                                        <input type="checkbox" class="btn-check" id="color-yellow2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-yellow2"> <i class="bx bxs-circle fs-18 text-warning"></i></label>
+           
+                                                        <input type="checkbox" class="btn-check" id="color-white2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-white2"> <i class="bx bxs-circle fs-18 text-white"></i></label>
+           
+                                                        <input type="checkbox" class="btn-check" id="color-green2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-green2"> <i class="bx bxs-circle fs-18 text-success"></i></label>
+           
+                                                   </div> -->
+                                                       </div>
+                                                  </div>
+
+
+                                                   <div class="col-lg-3">
+                                                            <div class="">
+                                                                 <h5 class="text-dark fw-medium">Colours: <%=
+                                                                           product.colour %> <span
+                                                                                class="text-muted"></span></h5>
+                                                                 <!-- <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
+                                                        <input type="checkbox" class="btn-check" id="size-s2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-s2">S</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-m2" checked>
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-m2">M</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-xl3">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xl3">Xl</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-xxl3">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xxl3">XXL</label>
+           
+                                                   </div> -->
+                                                            </div>
+                                                       </div>
+                                                  <div class="col-lg-3">
+                                                       <div class="">
+                                                            <h5 class="text-dark fw-medium">Design: <%= product.design %>
+                                                                      <span class="text-muted"></span></h5>
+                                                            <!-- <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
+                                                        <input type="checkbox" class="btn-check" id="size-s2">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-s2">S</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-m2" checked>
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-m2">M</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-xl3">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xl3">Xl</label>
+           
+                                                        <input type="checkbox" class="btn-check" id="size-xxl3">
+                                                        <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xxl3">XXL</label>
+           
+                                                   </div> -->
+                                                       </div>
+                                                  </div>
+</div>
+
+
+
+  
+  
+
+
+
+                                                  <div class="row align-items-center g-2 mb-3">
+                                                        <div class="col-lg-3">
+                                                       <div class="">
+                                                            <h5 class="text-dark fw-medium mt-3">Ideal for: <%= product.gender %></h5>
+                                                       </div>
+                                                        </div>
+
+                                                       <div class="col-lg-3">
+                                                       <div class="">
+                                                            <h5 class="text-dark fw-medium mt-3">Quantity : <%= product.stock %></h5>
+                                                  <!-- <div class="input-step border bg-body-secondary p-1 mt-1 rounded d-inline-flex overflow-visible"> -->
+                                                  <!-- <button type="button" class="minus bg-light text-dark border-0 rounded-1 fs-20 lh-1 h-100"></button> -->
+
+                                                  <!-- <button type="button" class="plus bg-light text-dark border-0 rounded-1 fs-20 lh-1 h-100">+</button> -->
+                                                  <!-- </div>  -->
+                                             </div>
+                                             </div>
+                                             </div>
+
+                                             <!-- <ul class="d-flex flex-column gap-2 list-unstyled fs-15 my-3">
+                                         <li>
+                                              <i class='bx bx-check text-success'></i> In Stock
+                                         </li>
+                                         <li>
+                                              <i class='bx bx-check text-success'></i> Free delivery available
+                                         </li>
+                                         <li>
+                                              <i class='bx bx-check text-success'></i> Sales 10% Off Use Code: <span class="text-dark fw-medium">CODE123</span>
+                                         </li>
+                                    </ul> -->
+                                             <h4 class="text-dark fw-medium">Description :</h4>
+                                             <p class="text-muted">
+                                                  <%= product.description %>
+                                                       <!--  <a href="#!" class="link-primary">Read more</a></p> -->
+                                                       <!-- <h4 class="text-dark fw-medium mt-3">Available offers :</h4> -->
+                                                       <!-- <div class="d-flex align-items-center mt-2">
+                                         <i class="bx bxs-bookmarks text-success me-3 fs-20 mt-1"></i>
+                                         <p class="mb-0"><span class="fw-medium text-dark">Bank Offer</span> 10% instant discount on Bank Debit Cards, up to $30 on orders of $50 and above</p>
+                                    </div>
+                                    <div class="d-flex align-items-center mt-2">
+                                         <i class="bx bxs-bookmarks text-success me-3 fs-20 mt-1"></i>
+                                         <p class="mb-0"><span class="fw-medium text-dark">Bank Offer</span> Grab our exclusive offer now and save 20% on your next purchase! Don't miss out, shop today!</p>
+                                    </div> -->
+                                        </div>
+                                   </div>
+                              </div>
+                         </div>
+
+
+
+                    </div>
+                    <!-- End Container Fluid -->
+<style>
+  /* Default image styling */
+  .carousel-item img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+  }
+
+  /* Medium devices (tablets, 768px and up) */
+  @media (max-width: 991.98px) {
+    .carousel-item img {
+      height: 400px;
+    }
+  }
+
+  /* Small devices (landscape phones, 576px and up) */
+  @media (max-width: 767.98px) {
+    .carousel-item img {
+      height: 300px;
+    }
+  }
+
+  /* Extra small devices (portrait phones) */
+  @media (max-width: 575.98px) {
+    .carousel-item img {
+      height: 200px;
+    }
+  }
+</style>
+
+
+<style>
+/* Product Detail Card Enhancements */
+.card-body {
+  padding: 2rem;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Title */
+.card-body a.fs-24 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1f2937;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+/* Price */
+.card-body h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.card-body h2 span {
+  font-size: 1rem;
+  color: #9ca3af;
+  text-decoration: line-through;
+  margin-left: 10px;
+}
+
+/* Grid Layout for Product Info */
+.product-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.8rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.product-info-grid h5 {
+  font-size: 1rem;
+  margin: 0;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Description Section */
+.card-body h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  color: #111827;
+}
+
+.card-body p.text-muted {
+  font-size: 1rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-top: 0.5rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+  .card-body {
+    padding: 1.2rem;
+  }
+
+  .card-body a.fs-24 {
+    font-size: 1.4rem;
+  }
+
+  .card-body h2 {
+    font-size: 1.2rem;
+  }
+
+  .product-info-grid h5 {
+    font-size: 0.95rem;
+  }
+
+  .card-body p.text-muted {
+    font-size: 0.95rem;
+  }
+}
+</style>
+
+
+
+                    <%- include('./partials/footer') %>
+
+     </div>

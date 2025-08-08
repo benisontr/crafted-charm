@@ -1,0 +1,247 @@
+<%- include('./partials/header') %>
+<%- include('./partials/adminHeader') %>
+
+<div class="wrapper">
+  <%- include('./partials/sidebar') %>
+
+  <div class="page-content">
+    <div class="container-xxl">
+      <div class="row">
+        <div class="col-xl-12 col-lg-12">
+          <form id="editProductForm" enctype="multipart/form-data">
+            <!-- 🖼️ Edit Photo Section -->
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Edit Product Photos</h4>
+              </div>
+              <div class="card-body">
+                <input type="file" name="thumbnail" class="filepond" multiple
+                  data-max-file-size="3MB" data-max-files="5"
+                  accept="image/png, image/jpeg, image/gif, image/jpg" />
+                <small class="text-muted fs-13 d-block mt-2">
+                  1600 x 1200 (4:3) recommended. PNG and JPG files are allowed.
+                </small>
+              </div>
+            </div>
+
+            <!-- 📦 Product Info -->
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Product Information</h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="productId" class="form-label">Product ID</label>
+                      <input type="hidden" id="productId" class="form-control" value="<%= product._id %>" disabled>
+                      <input type="hidden" name="productId" value="<%= product._id %>">
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="categoryId" class="form-label">Select Category</label>
+                      <select id="categoryId" name="categoryId" class="form-select" required>
+                        <option value="">-- Choose a Category --</option>
+                        <% categories.forEach(category => { %>
+                          <option value="<%= category._id %>" <%= category._id.toString() === product.categoryId._id.toString() ? 'selected' : '' %>>
+                            <%= category.name %>
+                          </option>
+                        <% }) %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-8">
+                    <div class="mb-3">
+                      <label for="name" class="form-label">Product Name</label>
+                      <input type="text" name="name" id="name" class="form-control" value="<%= product.name %>" required>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="mb-3">
+                      <label for="productCode" class="form-label">Product Code</label>
+                      <input type="text" name="productCode" id="productCode" class="form-control" value="<%= product.productCode %>">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="stock" class="form-label">Total Stock</label>
+                      <input type="number" name="stock" id="stock" class="form-control" value="<%= product.stock %>">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="lowStockLimit" class="form-label">Low Stock Alert</label>
+                      <input type="number" name="lowStockLimit" id="lowStockLimit" class="form-control" value="<%= product.lowStockLimit %>">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="description" class="form-label">Description</label>
+                  <textarea class="form-control" name="description" id="description" rows="6" required><%= product.description %></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- 💰 Pricing -->
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Pricing Details</h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <label for="price" class="form-label">Price</label>
+                    <div class="input-group mb-3">
+                      <span class="input-group-text">Rs: </span>
+                      <input type="number" name="price" id="price" class="form-control" value="<%= product.price %>" required>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6">
+                    <label for="discount" class="form-label">Discount Price</label>
+                    <div class="input-group mb-3">
+                      <span class="input-group-text"><i class='bx bxs-discount'></i></span>
+                      <input type="number" name="discount" id="discount" class="form-control" value="<%= product.discount %>">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ✅ Availability -->
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Availability</h4>
+              </div>
+              <div class="card-body">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" name="isAvailable" id="isAvailable" <%= product.isAvailable ? 'checked' : '' %>>
+                  <label class="form-check-label" for="isAvailable">Product is available</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="p-3 bg-light mb-3 rounded">
+              <div class="row justify-content-end g-2">
+                <div class="col-lg-2">
+                  <button type="submit" class="btn btn-outline-secondary w-100">Update Product</button>
+                </div>
+                <div class="col-lg-2">
+                  <button type="reset" class="btn btn-primary w-100">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <%- include('./partials/footer') %>
+  </div>
+</div>
+
+<!-- FilePond Styles -->
+<link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
+
+<!-- FilePond Scripts -->
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+
+
+<script>
+document.getElementById("editProductForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const formData = new FormData(form);
+  const productId = formData.get("productId"); // ← Get ID from hidden input
+
+  try {
+    const response = await fetch(`/admin/edit-product?id=${productId}`, {
+      method: "POST",
+      body: formData
+    });
+
+    // Try parsing only if it's JSON
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      if (data.success) {
+        alert("Product updated successfully!");
+        window.location.href = "/admin/list-product";
+      } else {
+        alert(data.message || "Error updating product.");
+      }
+    } else {
+      const text = await response.text();
+      console.error("Server returned non-JSON:", text);
+      alert("Unexpected server response.");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Something went wrong!");
+  }
+});
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("editProductForm");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    // Manually add checkbox value (because if unchecked, it's not included)
+    const isAvailableCheckbox = document.getElementById("isAvailable");
+    formData.set("isAvailable", isAvailableCheckbox.checked ? "true" : "false");
+
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert("Product updated successfully");
+        window.location.href = "/admin/products";
+      } else {
+        alert(result.message || "Something went wrong.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error updating product");
+    }
+  });
+});
+
+</script>
+
+
+
+
+
+<!-- Toastify -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+<style>
+  .filepond--root { margin-bottom: 0; }
+  .filepond--panel-root { background-color: #f8f9fa; border: 1px dashed #ced4da; }
+  .filepond--drop-label { color: #6c757d; }
+  .filepond--item { width: calc(25% - 0.5em); }
+  .filepond--list { display: flex; flex-wrap: wrap; gap: 0.5em; }
+</style>

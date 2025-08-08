@@ -1,0 +1,404 @@
+<%- include('./partials/header') %>
+<%- include('./partials/loginheader') %>
+
+<body>
+ <div class="login-container">
+    <div class="login-form-box">
+      <div class="logo">
+        <a href="/" class="logo logo-dark d-inline-block align-items-center">
+          <img src="assets/images/logo/logo-cc-login.png" alt="Crafted Charm Logo" style="height: 100px; width: auto;" class="mx-auto" />
+        </a>
+      </div>
+
+      <h2 class="welcome-heading">Welcome Back!</h2>
+      <p class="welcome-subtext">Let's reconnect with your crystal journey</p>
+
+      <form id="signinForm" action="/signin" method="post">
+        <!-- Email Input -->
+        <div class="input-wrapper">
+          <input type="email" id="email" name="email" placeholder="Enter your email" class="form-control" autocomplete="off" required/>
+          <span class="input-error-message" id="emailError"></span>
+        </div>
+
+        <!-- Password Input -->
+        <div class="input-wrapper password-wrapper">
+          <input type="password" id="password" name="password" placeholder="Enter your password" class="form-control"/>
+          <span class="toggle-eye" id="togglePassword"><i class="fa-solid fa-eye"></i></span>
+          <span class="input-error-message" id="passwordError"></span>
+        </div>
+
+        <button type="submit" class="login-btn">LOGIN</button>
+
+        <% if (message) { %>
+          <div class="alert alert-<%= messageType === 'success' ? 'success' : 'danger' %> mt-3" role="alert">
+              <%= message %>
+          </div>
+        <% } %>
+
+        <div class="forgot-password-wrapper">
+          <a href="/forgot-password" class="forgot-password-link">Forgot Password?</a>
+        </div>
+      </form>
+
+      <hr>
+
+      <!-- Google Login Button -->
+      <a href="/auth/google" class="google-login-btn">
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" width="20" />
+      Sign in with Google
+      </a>
+
+      <p class="register-text">
+        Don't have an account? <a href="/signup" class="register-link">Register now</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.getElementById("signinForm");
+      const emailInput = document.getElementById("email");
+      const passwordInput = document.getElementById("password");
+      const emailError = document.getElementById("emailError");
+      const passwordError = document.getElementById("passwordError");
+      const togglePassword = document.getElementById("togglePassword");
+
+      // ✅ 1. Form validation
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        let valid = true;
+
+        // Clear previous errors
+        emailError.textContent = "";
+        passwordError.textContent = "";
+
+        // Validate email
+        if (emailInput.value.trim() === "") {
+          emailError.textContent = "Email is required";
+          valid = false;
+        } else if (!emailInput.value.includes("@")) {
+          emailError.textContent = "Email must contain @";
+          valid = false;
+        }
+
+        // Validate password
+        if (passwordInput.value.trim() === "") {
+          passwordError.textContent = "Password is required";
+          valid = false;
+        }
+
+        // Simulate login
+        if (valid) {
+          // localStorage.setItem("userEmail", emailInput.value);
+          // window.location.href = "/account";
+          form.submit();
+        }
+      });
+
+      // ✅ 2. Toggle password visibility
+      togglePassword.addEventListener("click", function () {
+        const icon = this.querySelector("i");
+        const isPassword = passwordInput.type === "password";
+
+        passwordInput.type = isPassword ? "text" : "password";
+
+        icon.classList.toggle("fa-eye");
+        icon.classList.toggle("fa-eye-slash");
+      });
+    });
+  </script>
+
+</body>
+
+<style>
+  :root {
+    --crystal-purple: #6a4c93;
+    --gold-accent: #d4af37;
+    --earthy-brown: #8b5a2b;
+    --deep-teal: #1a7f7f;
+    --text-light: #f8f9fa;
+    --text-dark: #212529;
+    --bg-dark: #1a1a1a;
+    --bg-light: #2d2d2d;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: rgb(255, 251, 251);
+    color: var(--text-light);
+  }
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #fefaf6, #f3f0e8);
+  }
+
+  .google-login-btn {
+    display: inline-flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #444;
+    font-weight: 500;
+    border-radius: 5px;
+    margin-top: 15px;
+  }
+
+  .google-login-btn img {
+    margin-right: 10px;
+  }
+
+  .login-form-box {
+    background-color: rgba(26, 26, 26, 0.9);
+    padding: 2.5rem;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    transition: transform 0.3s ease;
+    text-align: center;
+  }
+
+  .login-form-box:hover {
+    transform: translateY(-5px);
+  }
+
+  .logo {
+    margin-bottom: 1.5rem;
+  }
+
+  .logo img {
+    height: 80px;
+    width: auto;
+    filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
+  }
+
+  .welcome-heading {
+    color: var(--gold-accent);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .welcome-subtext {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+    font-size: 1rem;
+  }
+
+  .input-wrapper {
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .input-wrapper input {
+    width: 100%;
+    padding: 8px 15px;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-light);
+    caret-color: var(--text-light);
+    -webkit-text-fill-color: var(--text-light);
+    transition: all 0.3s ease;
+    height: 38px; 
+    box-sizing: border-box;
+    line-height: 1.5;
+  }
+
+  .input-wrapper input:focus {
+    outline: none;
+    border-color: var(--gold-accent);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .input-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+  }
+
+  .input-error-message {
+    color: var(--error-color);
+    font-size: 0.8rem;
+    margin-top: 4px;
+    display: block;
+    text-align: left;
+    padding-left: 5px;
+  }
+
+  .toggle-eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.3s ease;
+    font-size: 1rem;
+    height: 18px;
+    width: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toggle-eye:hover {
+    color: var(--gold-accent);
+  }
+
+  .login-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--earthy-brown), var(--crystal-purple));
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 8px;
+    margin-bottom: 1.2rem;
+    height: 42px;
+  }
+
+  .login-btn:hover {
+    background: linear-gradient(135deg, var(--crystal-purple), var(--earthy-brown));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(106, 76, 147, 0.4);
+  }
+
+  .forgot-password-wrapper {
+    text-align: right;
+    margin-bottom: 1.2rem;
+  }
+
+  .forgot-password-link {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+  }
+
+  .forgot-password-link:hover {
+    color: var(--gold-accent);
+    text-decoration: underline;
+    opacity: 1;
+  }
+
+  .register-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    margin-top: 1.2rem;
+  }
+
+  .register-link {
+    color: var(--gold-accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .register-link:hover {
+    color: var(--crystal-purple);
+  }
+
+  .alert {
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 1.2rem;
+    font-size: 0.85rem;
+  }
+
+  .alert-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    color: #d4edda;
+  }
+
+  .alert-danger {
+    background-color: rgba(220, 53, 69, 0.2);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    color: #f8d7da;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 576px) {
+    .login-form-box {
+      padding: 1.8rem;
+      max-width: 100%;
+    }
+    
+    .login-container {
+      padding: 15px;
+    }
+    
+    .logo img {
+      height: 70px;
+    }
+    
+    .welcome-heading {
+      font-size: 1.7rem;
+    }
+    
+    .welcome-subtext {
+      font-size: 0.9rem;
+    }
+    
+    .input-wrapper input {
+      height: 36px;
+      padding: 7px 12px;
+    }
+    
+    .login-btn {
+      padding: 11px;
+      height: 40px;
+    }
+  }
+</style>
+
+    <!-- Start Footer Area  -->
+    <%- include('./partials/footer') %>
+
+    <!-- End Footer Area  -->
+
+    <!-- JS
+============================================ -->
+    <!-- Modernizer JS -->
+    <script src="assets/js/vendor/modernizr.min.js"></script>
+    <!-- jQuery JS -->
+    <script src="assets/js/vendor/jquery.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="assets/js/vendor/popper.min.js"></script>
+    <script src="assets/js/vendor/bootstrap.min.js"></script>
+    <script src="assets/js/vendor/slick.min.js"></script>
+    <script src="assets/js/vendor/js.cookie.js"></script>
+    <!-- <script src="assets/js/vendor/jquery.style.switcher.js"></script> -->
+    <script src="assets/js/vendor/jquery-ui.min.js"></script>
+    <script src="assets/js/vendor/jquery.ui.touch-punch.min.js"></script>
+    <script src="assets/js/vendor/jquery.countdown.min.js"></script>
+    <script src="assets/js/vendor/sal.js"></script>
+    <script src="assets/js/vendor/jquery.magnific-popup.min.js"></script>
+    <script src="assets/js/vendor/imagesloaded.pkgd.min.js"></script>
+    <script src="assets/js/vendor/isotope.pkgd.min.js"></script>
+    <script src="assets/js/vendor/counterup.js"></script>
+    <script src="assets/js/vendor/waypoints.min.js"></script>
+
+    <!-- Main JS -->
+    <script src="assets/js/main.js"></script>
