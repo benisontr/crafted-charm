@@ -177,7 +177,7 @@ for (const item of orderData.items) {
 const order = await Orders.findById(newOrder._id).populate('items.productId');
 const PDFDocument = require('pdfkit');
 const getStream = require('get-stream');
-
+const pdfBuffer = await generateInvoicePDF(order, orderData);
 async function generateInvoicePDF(order, orderData) {
   const doc = new PDFDocument({
     size: 'A4',
