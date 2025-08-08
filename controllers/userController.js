@@ -14,6 +14,8 @@ const Orders = require('../models/orderModel')
 const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
 const { StandardCheckoutClient, Env, StandardCheckoutPayRequest } = require('pg-sdk-node');
+const PDFDocument = require('pdfkit');
+const getStream = require('get-stream');
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -109,262 +111,84 @@ const amount = parseInt(total); // total should be rupees, convert to integer
 const status = async (req, res) => {
   try {
     const merchantOrderId = req.query.id;
-    if (!merchantOrderId) {
-      console.error("❌ No merchantOrderId provided in query params");
-      return res.redirect(failureUrl);
-    }
+    if (!merchantOrderId) return res.redirect(failureUrl);
 
     const response = await client.getOrderStatus(merchantOrderId);
-    console.log("📦 Full status response:", JSON.stringify(response, null, 2));
-
     const status = response.state;
-    console.log(status);
 
-    if (status === "COMPLETED") {
-      if (!req.session || !req.session.user) {
-        console.error("❌ No session user found");
-        return res.redirect(failureUrl);
-      }
+    if (status !== "COMPLETED") return res.redirect(failureUrl);
+    if (!req.session?.user) return res.redirect(failureUrl);
 
-      const orderData = tempBookingStore[merchantOrderId];
-      if (!orderData) {
-        console.error("❌ Order data not found in temp store");
-        return res.redirect(failureUrl);
-      }
+    const orderData = tempBookingStore[merchantOrderId];
+    if (!orderData) return res.redirect(failureUrl);
 
-      const newOrder = new Orders({
-        userId: req.session.user,
-        items: orderData.items.map(item => ({
-          productId: item.productId,
-          quantity: item.quantity,
-          price: Number(item.price),
-          subtotal: Number(item.subtotal),
-        })),
-        shippingCharge: Number(orderData.shippingCharge),
-        discount: Number(orderData.discount),
-        total: Number(orderData.total),
-        paymentMethod: "PhonePe",
-        paymentStatus: "Paid",
-        status: "Pending",
-        address: orderData.address,
-      });
-      await newOrder.save();
+    const newOrder = new Orders({
+      userId: req.session.user,
+      items: orderData.items.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: Number(item.price),
+        subtotal: Number(item.subtotal),
+      })),
+      shippingCharge: Number(orderData.shippingCharge),
+      discount: Number(orderData.discount),
+      total: Number(orderData.total),
+      paymentMethod: "PhonePe",
+      paymentStatus: "Paid",
+      status: "Pending",
+      address: orderData.address,
+    });
 
-      await Users.findByIdAndUpdate(req.session.user, {
-        $push: {
-          orders: { orderId: newOrder._id },
+    await newOrder.save();
+
+    await Users.findByIdAndUpdate(req.session.user, {
+      $push: { orders: { orderId: newOrder._id } },
+      $set: {
+        "address.0.shipping": {
+          name: orderData.address.name,
+          addressLine: orderData.address.line,
+          city: orderData.address.city,
+          state: orderData.address.state,
+          country: orderData.address.country || "India",
+          pincode: orderData.address.pincode,
+          phone: orderData.address.phone,
         },
-        $set: {
-          "address.0.shipping": {
-            name: orderData.address.name,
-            addressLine: orderData.address.line,
-            city: orderData.address.city,
-            state: orderData.address.state,
-            country: orderData.address.country || "India",
-            pincode: orderData.address.pincode,
-            phone: orderData.address.phone,
-          },
-        },
+      },
+    });
+
+    for (const item of orderData.items) {
+      await Products.updateOne(
+        { _id: item.productId },
+        { $inc: { availableStock: -item.quantity } }
+      );
+    }
+
+    const order = await Orders.findById(newOrder._id).populate('items.productId');
+
+    // Generate PDF invoice
+    const pdfBuffer = await generateInvoicePDF(order, orderData);
+
+    // Send email with invoice
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL,
+        to: orderData.address.email,
+        subject: `🧺 Your Crafted Charm Order Confirmed: ${newOrder.orderId}`,
+        html: generateEmailHTML(order, orderData, newOrder),
+        attachments: [{
+          filename: `Invoice_${newOrder.orderId}.pdf`,
+          content: pdfBuffer,
+          contentType: 'application/pdf'
+        }]
       });
-
-      for (const item of orderData.items) {
-        await Products.updateOne(
-          { _id: item.productId },
-          { $inc: { availableStock: -item.quantity } }
-        );
-      }
-
-      const order = await Orders.findById(newOrder._id).populate('items.productId');
-      const PDFDocument = require('pdfkit');
-      const getStream = require('get-stream');
-
-      async function generateInvoicePDF(order, orderData) {
-        const doc = new PDFDocument({ size: 'A4', margin: 40 });
-        const black = '#111111';
-        const gray = '#666666';
-        const lightGray = '#F4F4F4';
-
-        try {
-          doc.image('public/assets/images/logo-1.png', 40, 40, { width: 60 });
-        } catch {
-          doc.fillColor(black).fontSize(20).font('Helvetica-Bold')
-            .text('Crafted Charm', 40, 50);
-        }
-
-        doc.fontSize(10).fillColor(gray)
-          .text('Crafted Charm', 120, 45)
-          .text('Hubli, Karnataka - 580020', 120, 58)
-          .text('Phone: +91 8217719225', 120, 71)
-          .text('Email: craftedcharm.luck@gmail.com', 120, 84);
-
-        doc.fontSize(20).fillColor(black).font('Helvetica-Bold')
-          .text('INVOICE', 400, 50, { align: 'right' });
-
-        doc.fontSize(10).font('Helvetica')
-          .text(`Invoice #${order.orderId}`, 400, 75, { align: 'right' })
-          .text(`Date: ${new Date(order.createdAt).toLocaleDateString('en-IN')}`, 400, 90, { align: 'right' });
-
-        doc.rect(430, 110, 100, 25).fill('#28a745');
-        doc.fillColor('white').fontSize(12).font('Helvetica-Bold')
-          .text('PAID', 460, 117);
-        doc.fillColor('black');
-
-        doc.moveTo(40, 140).lineTo(555, 140).strokeColor(gray).stroke();
-
-        const dueDate = new Date(order.createdAt);
-        dueDate.setDate(dueDate.getDate() + 10);
-
-        doc.fontSize(11).font('Helvetica-Bold').fillColor(black).text('Bill To:', 40, 155);
-        doc.fontSize(10).font('Helvetica')
-          .text(orderData.address.name, 40, 170)
-          .text(orderData.address.line, 40, 185)
-          .text(`${orderData.address.city}, ${orderData.address.state}`, 40, 200)
-          .text(`Pincode: ${orderData.address.pincode}`, 40, 215)
-          .text(`Phone: ${orderData.address.phone}`, 40, 230)
-          .text(`Email: ${orderData.address.email}`, 40, 245);
-
-        doc.fontSize(11).font('Helvetica-Bold').text('Payment Details:', 300, 155);
-        doc.fontSize(10).font('Helvetica')
-          .text(`Method: ${order.paymentMethod}`, 300, 170)
-          .text(`Transaction ID: ${order.transactionId || 'N/A'}`, 300, 185)
-          .text(`Status: Paid`, 300, 200)
-          .text(`Due Date: ${dueDate.toLocaleDateString('en-IN')}`, 300, 215);
-
-        const tableTop = 280;
-        doc.fontSize(10).font('Helvetica-Bold').fillColor(black);
-        doc.rect(40, tableTop, 515, 20).fill(lightGray);
-        doc.fillColor(black)
-          .text('Product', 45, tableTop + 5)
-          .text('Qty', 400, tableTop + 5, { width: 40, align: 'right' })
-          .text('Price', 480, tableTop + 5, { width: 60, align: 'right' });
-
-        let y = tableTop + 25;
-        doc.font('Helvetica').fontSize(10).fillColor(black);
-
-        order.items.forEach((item, i) => {
-          doc.fillColor(i % 2 === 0 ? '#FFFFFF' : '#FAFAFA').rect(40, y - 5, 515, 20).fill();
-          doc.fillColor(black)
-            .text(item.productId.name, 45, y)
-            .text(item.quantity.toString(), 400, y, { width: 40, align: 'right' })
-            .text(`${Number(item.subtotal).toFixed(2)} Rs`, 480, y, { width: 60, align: 'right' });
-          y += 20;
-        });
-
-        const subtotal = orderData.items.reduce((sum, i) => sum + Number(i.subtotal), 0);
-        const shipping = Number(orderData.shippingCharge);
-        const tax = 0;
-        const total = subtotal + tax + shipping;
-
-        y += 10;
-        const addTotalRow = (label, amount, bold = false) => {
-          doc.font(bold ? 'Helvetica-Bold' : 'Helvetica')
-            .fillColor(black)
-            .text(label, 400, y, { width: 80, align: 'right' })
-            .text(`${Number(amount).toFixed(2)} Rs`, 480, y, { width: 60, align: 'right' });
-          y += 15;
-        };
-
-        addTotalRow('Subtotal:', subtotal);
-        addTotalRow('Tax (0%):', tax);
-        addTotalRow('Shipping:', shipping);
-        addTotalRow('Total:', total, true);
-        addTotalRow('Amount Paid:', total);
-        addTotalRow('Balance Due:', 0);
-
-        doc.moveTo(40, 700).lineTo(555, 700).strokeColor('#CCCCCC').stroke();
-        doc.fontSize(8).fillColor(gray)
-          .text('Thank you for your business!', 40, 710)
-          .text('Crafted Charm | Hubli, Karnataka', 40, 725)
-          .text('Phone: +91 8217719225 | Email: craftedcharm.luck@gmail.com', 40, 740)
-          .text(`Invoice generated on ${new Date().toLocaleString('en-IN')}`, 400, 740, { align: 'right' });
-
-        doc.end();
-        return await getStream.buffer(doc);
-      }
-
-      const pdfBuffer = await generateInvoicePDF(order, orderData);
-      try {
-  await transporter.sendMail({
-  from: process.env.EMAIL,
-  to: orderData.address.email,
-  subject: "🧺 Your Crafted Charm Order Confirmed: " + newOrder.orderId,
-  html: `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px;">
-      <h2 style="background: #5e9c76; color: white; padding: 15px; margin: 0;">Thank you for your order</h2>
-      <p>Hi <strong>${orderData.address.name}</strong>,</p>
-      <p>Just to let you know — we’ve received your order <strong>${newOrder.orderId}</strong>, and it is now being processed:</p>
-
-      <h3 style="color: #5e9c76;">[Order ${newOrder.orderId}] (${new Date(newOrder.createdAt).toDateString()})</h3>
-      
-      <table width="100%" border="1" cellspacing="0" cellpadding="10" style="border-collapse: collapse; margin-bottom: 20px;">
-        <thead>
-          <tr style="background: #f2f2f2;">
-            <th align="left">Product</th>
-            <th align="center">Quantity</th>
-            <th align="right">Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${order.items.map(item => `
-            <tr>
-              <td>${item.productId.name || 'Product'}</td>
-              <td align="center">${item.quantity}</td>
-              <td align="right">₹${Number(item.subtotal).toFixed(2)}</td>
-            </tr>
-          `).join('')}
-          <tr>
-            <td colspan="2" align="right"><strong>Subtotal:</strong></td>
-            <td align="right">₹${(orderData.items.reduce((acc, item) => acc + Number(item.subtotal), 0)).toFixed(2)}</td>
-          </tr>
-          <tr>
-            <td colspan="2" align="right"><strong>Shipping:</strong></td>
-            <td align="right">₹${orderData.shippingCharge.toFixed(2)}</td>
-          </tr>
-          <tr>
-            <td colspan="2" align="right"><strong>Total:</strong></td>
-            <td align="right"><strong>₹${orderData.total.toFixed(2)}</strong></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p><strong>Payment method:</strong> ${newOrder.paymentMethod}</p>
-
-      <h3 style="color: #5e9c76;">Shipping address</h3>
-      <p>
-        ${orderData.address.name}<br>
-        ${orderData.address.line}<br>
-        ${orderData.address.city}, ${orderData.address.state} ${orderData.address.pincode}<br>
-        ${orderData.address.phone}<br>
-        ${orderData.address.email}
-      </p>
-
-      <p>Your order will be dispatched within 8 to 10 days and should arrive within an additional 2 to 3 days. Thanks for shopping with us!</p>
-
-      <footer style="text-align: center; color: #888; font-size: 12px; margin-top: 30px;">
-        Crafted Charm — Built by Crafted Charm
-      </footer>
-    </div>
-  `,
-  attachments: [
-    {
-      filename: `Invoice_${order.orderId}.pdf`,
-      content: pdfBuffer,
-      contentType: 'application/pdf'
+    } catch (e) {
+      console.error("❌ Failed to send email:", e);
     }
-  ]
-});
- } catch (e) {
-        console.error("❌ Failed to send email:", e);
-      }
 
-      delete tempBookingStore[merchantOrderId];
-      return res.redirect(`${baseUrl}/order?id=${newOrder._id}`);
-    } else {
-      console.log(`Payment status: ${status}`);
-      return res.redirect(failureUrl);
-    }
+    delete tempBookingStore[merchantOrderId];
+    return res.redirect(`${baseUrl}/order?id=${newOrder._id}`);
   } catch (error) {
-    console.error("Error in status check:", error.response?.data || error.message, error.stack);
+    console.error("Error in status check:", error.message);
     return res.redirect(failureUrl);
   }
 };
