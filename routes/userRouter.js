@@ -116,7 +116,7 @@ userRouter.get("/payment", isLogin, userController.viewPayment);
 userRouter.get("/privacy-policy", userController.viewPrivacyPolicy);
 userRouter.get("/terms-of-service", userController.viewTermsofService);
 // userRouter.get("/refund-policy", userController.viewRefundPolicy);
-userRouter.get("/return-policy", userController.viewReturnPolicy);
+// userRouter.get("/return-policy", userController.viewReturnPolicy);
 userRouter.get("/shipping-policy", userController.viewShippingPolicy);
 userRouter.get("/api/countries", userController.getApiCountries);
 userRouter.get("/api/search", userController.getApiSearch);

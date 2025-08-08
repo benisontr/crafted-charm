@@ -477,63 +477,91 @@
           </div>
         </div>
         
-        <!-- Product Return Tab -->
-        <div class="tab-pane fade" id="product-return" role="tabpanel" aria-labelledby="return-tab">
-          <div class="card-body">
-            <h3 class="text-center text-danger mb-4">Return Product Request</h3>
+        <!-- Product Refund Tab -->
+   <div class="tab-pane fade" id="product-return" role="tabpanel" aria-labelledby="return-tab">
+  <div class="card-body">
+    <h3 class="text-center text-danger mb-4">Refund Request</h3>
 
-            <form id="returnForm">
-              <div class="mb-3">
-                <label for="receivedDate" class="form-label">Order Id</label>
-                <input type="text" class="form-control" id="orderId" name="orderId" required style="border: 1px solid #333;">
-              </div>
-              <div class="mb-3">
-                <label for="receivedDate" class="form-label">Product Name</label>
-                <input type="text" class="form-control" id="productName" name="productName" required style="border: 1px solid #333;">
-              </div>
+    <form id="returnForm">
+      <!-- Order ID -->
+      <div class="mb-3">
+        <label for="orderId" class="form-label">Order Id</label>
+        <input type="text" class="form-control" id="orderId" name="orderId" required style="border: 1px solid #333;">
+      </div>
 
-              <!-- Date of Product Received -->
-              <div class="mb-3">
-                <label for="receivedDate" class="form-label">Date of Product Received</label>
-                <input type="date" class="form-control" id="receivedDate" name="receivedDate" required style="border: 1px solid #333;">
-                <small id="dateError" class="text-danger d-none">Return period has expired. Only returns within 7 days are allowed.</small>
-              </div>
+      <!-- Product Name -->
+      <div class="mb-3">
+        <label for="productName" class="form-label">Product Name</label>
+        <input type="text" class="form-control" id="productName" name="productName" required style="border: 1px solid #333;">
+      </div>
 
-              <!-- Reason -->
-              <div class="mb-3">
-                <label for="reason" class="form-label">Reason for Return</label>
-                <select class="form-select" id="reason" name="reason" required>
-                  <option value="" disabled selected>Select a reason</option>
-                  <option>Damaged product</option>
-                  <option>Wrong item delivered</option>
-                  <option>Not as described</option>
-                  <option>Other</option>
-                </select>
-              </div>
+      <!-- Date of Product Received -->
+      <div class="mb-3">
+        <label for="receivedDate" class="form-label">Date of Product Received</label>
+        <input type="date" class="form-control" id="receivedDate" name="receivedDate" required style="border: 1px solid #333;">
+        <small id="dateError" class="text-danger d-none">Refund period has expired. Only refund within 7 days are allowed.</small>
+      </div>
 
-              <!-- Additional Description -->
-              <div class="mb-3">
-                <label for="description" class="form-label">Additional Details (optional)</label>
-                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-              </div>
+      <!-- Reason for Refund -->
+      <div class="mb-3">
+        <label for="reason" class="form-label">Reason for Refund</label>
+        <select class="form-select" id="reason" name="reason" required>
+          <option value="" disabled selected>Select a reason</option>
+          <option>Damaged product</option>
+          <option>Wrong item delivered</option>
+          <option>Not as described</option>
+          <option>Other</option>
+        </select>
+      </div>
 
-              <!-- Upload Image -->
-              <div class="mb-3">
-                <label for="image" class="form-label">Upload Image (optional)</label>
-                <input class="form-control" type="file" id="image" name="image">
-              </div>
+      <!-- Additional Details -->
+      <div class="mb-3">
+        <label for="description" class="form-label">Additional Details (optional)</label>
+        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+      </div>
 
-              <!-- Submit -->
-              <div class="d-grid">
-                <button type="submit" class="btn btn-danger">Submit Return Request</button>
-              </div>
-            </form>
+      <!-- Upload Image -->
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload Image (optional)</label>
+        <input class="form-control" type="file" id="image" name="image">
+      </div>
 
-            <div class="mt-3 text-center text-muted" style="font-size: 0.9rem;">
-              Return requests are allowed only within 7 days of receiving the product.
-            </div>
-          </div>
-        </div>
+      <!-- Account Holder Name -->
+      <div class="mb-3">
+        <label for="accountHolder" class="form-label">Account Holder Name</label>
+        <input type="text" class="form-control" id="accountHolder" name="accountHolder" required style="border: 1px solid #333;">
+      </div>
+
+      <!-- Bank Name -->
+      <div class="mb-3">
+        <label for="bankName" class="form-label">Bank Name</label>
+        <input type="text" class="form-control" id="bankName" name="bankName" required style="border: 1px solid #333;">
+      </div>
+
+      <!-- Account Number -->
+      <div class="mb-3">
+        <label for="accountNumber" class="form-label">Account Number</label>
+        <input type="text" class="form-control" id="accountNumber" name="accountNumber" required style="border: 1px solid #333;">
+      </div>
+
+      <!-- IFSC Code -->
+      <div class="mb-3">
+        <label for="ifscCode" class="form-label">IFSC Code</label>
+        <input type="text" class="form-control" id="ifscCode" name="ifscCode" required style="border: 1px solid #333;">
+      </div>
+
+      <!-- Submit -->
+      <div class="d-grid">
+        <button type="submit" class="btn btn-danger">Submit Refund Request</button>
+      </div>
+    </form>
+
+    <div class="mt-3 text-center text-muted" style="font-size: 0.9rem;">
+      Refund requests are allowed only within 7 days of receiving the product.
+    </div>
+  </div>
+</div>
+
         
         <!-- Address Tab -->
         <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
