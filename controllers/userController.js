@@ -118,189 +118,172 @@ const status = async (req, res) => {
     console.log("📦 Full status response:", JSON.stringify(response, null, 2));
 
     const status = response.state;
-    console.log(status)
+    console.log(status);
 
     if (status === "COMPLETED") {
-      console.log(tempBookingStore)
+      if (!req.session || !req.session.user) {
+        console.error("❌ No session user found");
+        return res.redirect(failureUrl);
+      }
+
       const orderData = tempBookingStore[merchantOrderId];
-      console.log(orderData)
       if (!orderData) {
         console.error("❌ Order data not found in temp store");
         return res.redirect(failureUrl);
       }
 
       const newOrder = new Orders({
-  userId: req.session.user,
-  items: orderData.items.map(item => ({
-    productId: item.productId, // ✅ must be present
-    quantity: item.quantity,
-    price: item.price,
-    subtotal: item.subtotal,
-  })),
-  shippingCharge: orderData.shippingCharge,
-  discount: orderData.discount,
-  total: orderData.total,
-  paymentMethod: "PhonePe",
-  paymentStatus: "Paid",
-  status: "Pending", // ✅ corrected from "Paid"
-  address: orderData.address,
-});
+        userId: req.session.user,
+        items: orderData.items.map(item => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          price: Number(item.price),
+          subtotal: Number(item.subtotal),
+        })),
+        shippingCharge: Number(orderData.shippingCharge),
+        discount: Number(orderData.discount),
+        total: Number(orderData.total),
+        paymentMethod: "PhonePe",
+        paymentStatus: "Paid",
+        status: "Pending",
+        address: orderData.address,
+      });
       await newOrder.save();
 
-await Users.findByIdAndUpdate(req.session.user, {
-    $push: {
-    orders: {
-      orderId: newOrder._id
-    }
-  },
-  $set: {
-    "address.0.shipping": {
-      name: orderData.address.name,
-      addressLine: orderData.address.line,
-      city: orderData.address.city,
-      state: orderData.address.state,
-      country: orderData.address.country || "India", // fallback if country missing
-      pincode: orderData.address.pincode,
-      phone: orderData.address.phone,
-    }
-  }
-});
+      await Users.findByIdAndUpdate(req.session.user, {
+        $push: {
+          orders: { orderId: newOrder._id },
+        },
+        $set: {
+          "address.0.shipping": {
+            name: orderData.address.name,
+            addressLine: orderData.address.line,
+            city: orderData.address.city,
+            state: orderData.address.state,
+            country: orderData.address.country || "India",
+            pincode: orderData.address.pincode,
+            phone: orderData.address.phone,
+          },
+        },
+      });
 
-// 🔽 Decrease available stock of each product
-for (const item of orderData.items) {
-  await Products.updateOne(
-    { _id: item.productId },
-    { $inc: { availableStock: -item.quantity } }
-  );
-}
+      for (const item of orderData.items) {
+        await Products.updateOne(
+          { _id: item.productId },
+          { $inc: { availableStock: -item.quantity } }
+        );
+      }
 
-const order = await Orders.findById(newOrder._id).populate('items.productId');
-const PDFDocument = require('pdfkit');
-const getStream = require('get-stream');
-const pdfBuffer = await generateInvoicePDF(order, orderData);
-async function generateInvoicePDF(order, orderData) {
-  const doc = new PDFDocument({
-    size: 'A4',
-    margin: 40,
-    bufferPages: true,
-    info: {
-      Title: `Invoice ${order.orderId}`,
-      Author: 'Crafted Charm',
-      Creator: 'Crafted Charm Billing System'
-    }
-  });
+      const order = await Orders.findById(newOrder._id).populate('items.productId');
+      const PDFDocument = require('pdfkit');
+      const getStream = require('get-stream');
 
-  const black = '#111111';
-  const gray = '#666666';
-  const lightGray = '#F4F4F4';
+      async function generateInvoicePDF(order, orderData) {
+        const doc = new PDFDocument({ size: 'A4', margin: 40 });
+        const black = '#111111';
+        const gray = '#666666';
+        const lightGray = '#F4F4F4';
 
-  // Logo and Company Info
-  try {
-    doc.image('public/assets/images/logo-1.png', 40, 40, { width: 60 });
-  } catch (e) {
-    doc.fillColor(black).fontSize(20).font('Helvetica-Bold')
-       .text('Crafted Charm', 40, 50);
-  }
+        try {
+          doc.image('public/assets/images/logo-1.png', 40, 40, { width: 60 });
+        } catch {
+          doc.fillColor(black).fontSize(20).font('Helvetica-Bold')
+            .text('Crafted Charm', 40, 50);
+        }
 
-  doc.fontSize(10).fillColor(gray)
-    .text('Crafted Charm', 120, 45)
-    .text('Hubli, Karnataka - 580020', 120, 58)
-    .text('Phone: +91 8217719225', 120, 71)
-    .text('Email: craftedcharm.luck@gmail.com', 120, 84);
+        doc.fontSize(10).fillColor(gray)
+          .text('Crafted Charm', 120, 45)
+          .text('Hubli, Karnataka - 580020', 120, 58)
+          .text('Phone: +91 8217719225', 120, 71)
+          .text('Email: craftedcharm.luck@gmail.com', 120, 84);
 
-  // Invoice Label
-  doc.fontSize(20).fillColor(black).font('Helvetica-Bold')
-    .text('INVOICE', 400, 50, { align: 'right' });
+        doc.fontSize(20).fillColor(black).font('Helvetica-Bold')
+          .text('INVOICE', 400, 50, { align: 'right' });
 
-  doc.fontSize(10).font('Helvetica')
-    .text(`Invoice #${order.orderId}`, 400, 75, { align: 'right' })
-    .text(`Date: ${new Date(order.createdAt).toLocaleDateString('en-IN')}`, 400, 90, { align: 'right' });
+        doc.fontSize(10).font('Helvetica')
+          .text(`Invoice #${order.orderId}`, 400, 75, { align: 'right' })
+          .text(`Date: ${new Date(order.createdAt).toLocaleDateString('en-IN')}`, 400, 90, { align: 'right' });
 
-  // PAID Label
-  doc.rect(430, 110, 100, 25).fill('#28a745');
-  doc.fillColor('white').fontSize(12).font('Helvetica-Bold')
-    .text('PAID', 460, 117);
-  doc.fillColor('black');
+        doc.rect(430, 110, 100, 25).fill('#28a745');
+        doc.fillColor('white').fontSize(12).font('Helvetica-Bold')
+          .text('PAID', 460, 117);
+        doc.fillColor('black');
 
-  // Divider
-  doc.moveTo(40, 140).lineTo(555, 140).strokeColor(gray).stroke();
+        doc.moveTo(40, 140).lineTo(555, 140).strokeColor(gray).stroke();
 
-  // Billing Info
-  const dueDate = new Date(order.createdAt);
-  dueDate.setDate(dueDate.getDate() + 10);
+        const dueDate = new Date(order.createdAt);
+        dueDate.setDate(dueDate.getDate() + 10);
 
-  doc.fontSize(11).font('Helvetica-Bold').fillColor(black).text('Bill To:', 40, 155);
-  doc.fontSize(10).font('Helvetica')
-    .text(orderData.address.name, 40, 170)
-    .text(orderData.address.line, 40, 185)
-    .text(`${orderData.address.city}, ${orderData.address.state}`, 40, 200)
-    .text(`Pincode: ${orderData.address.pincode}`, 40, 215)
-    .text(`Phone: ${orderData.address.phone}`, 40, 230)
-    .text(`Email: ${orderData.address.email}`, 40, 245);
+        doc.fontSize(11).font('Helvetica-Bold').fillColor(black).text('Bill To:', 40, 155);
+        doc.fontSize(10).font('Helvetica')
+          .text(orderData.address.name, 40, 170)
+          .text(orderData.address.line, 40, 185)
+          .text(`${orderData.address.city}, ${orderData.address.state}`, 40, 200)
+          .text(`Pincode: ${orderData.address.pincode}`, 40, 215)
+          .text(`Phone: ${orderData.address.phone}`, 40, 230)
+          .text(`Email: ${orderData.address.email}`, 40, 245);
 
-  doc.fontSize(11).font('Helvetica-Bold').text('Payment Details:', 300, 155);
-  doc.fontSize(10).font('Helvetica')
-    .text(`Method: ${order.paymentMethod}`, 300, 170)
-    .text(`Transaction ID: ${order.transactionId || 'N/A'}`, 300, 185)
-    .text(`Status: Paid`, 300, 200)
-    .text(`Due Date: ${dueDate.toLocaleDateString('en-IN')}`, 300, 215);
+        doc.fontSize(11).font('Helvetica-Bold').text('Payment Details:', 300, 155);
+        doc.fontSize(10).font('Helvetica')
+          .text(`Method: ${order.paymentMethod}`, 300, 170)
+          .text(`Transaction ID: ${order.transactionId || 'N/A'}`, 300, 185)
+          .text(`Status: Paid`, 300, 200)
+          .text(`Due Date: ${dueDate.toLocaleDateString('en-IN')}`, 300, 215);
 
-  // Table Header
-  const tableTop = 280;
-  doc.fontSize(10).font('Helvetica-Bold').fillColor(black);
-  doc.rect(40, tableTop, 515, 20).fill(lightGray);
-  doc.fillColor(black)
-    .text('Product', 45, tableTop + 5)
-    .text('Qty', 400, tableTop + 5, { width: 40, align: 'right' })
-    .text('Price', 480, tableTop + 5, { width: 60, align: 'right' });
+        const tableTop = 280;
+        doc.fontSize(10).font('Helvetica-Bold').fillColor(black);
+        doc.rect(40, tableTop, 515, 20).fill(lightGray);
+        doc.fillColor(black)
+          .text('Product', 45, tableTop + 5)
+          .text('Qty', 400, tableTop + 5, { width: 40, align: 'right' })
+          .text('Price', 480, tableTop + 5, { width: 60, align: 'right' });
 
-  // Table Rows
-  let y = tableTop + 25;
-  doc.font('Helvetica').fontSize(10).fillColor(black);
+        let y = tableTop + 25;
+        doc.font('Helvetica').fontSize(10).fillColor(black);
 
-  order.items.forEach((item, i) => {
-    doc.fillColor(i % 2 === 0 ? '#FFFFFF' : '#FAFAFA').rect(40, y - 5, 515, 20).fill();
-    doc.fillColor(black)
-      .text(item.productId.name, 45, y)
-      .text(item.quantity.toString(), 400, y, { width: 40, align: 'right' })
-      .text(`₹${item.subtotal.toFixed(2)}`, 480, y, { width: 60, align: 'right' });
-    y += 20;
-  });
+        order.items.forEach((item, i) => {
+          doc.fillColor(i % 2 === 0 ? '#FFFFFF' : '#FAFAFA').rect(40, y - 5, 515, 20).fill();
+          doc.fillColor(black)
+            .text(item.productId.name, 45, y)
+            .text(item.quantity.toString(), 400, y, { width: 40, align: 'right' })
+            .text(`${Number(item.subtotal).toFixed(2)} Rs`, 480, y, { width: 60, align: 'right' });
+          y += 20;
+        });
 
-  // Totals Section
-  const subtotal = orderData.items.reduce((sum, i) => sum + i.subtotal, 0);
-  const tax = 0;
-  const shipping = orderData.shippingCharge || 0;
-  const total = subtotal + tax + shipping;
+        const subtotal = orderData.items.reduce((sum, i) => sum + Number(i.subtotal), 0);
+        const shipping = Number(orderData.shippingCharge);
+        const tax = 0;
+        const total = subtotal + tax + shipping;
 
-  y += 10;
+        y += 10;
+        const addTotalRow = (label, amount, bold = false) => {
+          doc.font(bold ? 'Helvetica-Bold' : 'Helvetica')
+            .fillColor(black)
+            .text(label, 400, y, { width: 80, align: 'right' })
+            .text(`${Number(amount).toFixed(2)} Rs`, 480, y, { width: 60, align: 'right' });
+          y += 15;
+        };
 
-  const addTotalRow = (label, amount, bold = false) => {
-    doc.font(bold ? 'Helvetica-Bold' : 'Helvetica')
-      .fillColor(black)
-      .text(label, 400, y, { width: 80, align: 'right' })
-      .text(`₹${amount.toFixed(2)}`, 480, y, { width: 60, align: 'right' });
-    y += 15;
-  };
+        addTotalRow('Subtotal:', subtotal);
+        addTotalRow('Tax (0%):', tax);
+        addTotalRow('Shipping:', shipping);
+        addTotalRow('Total:', total, true);
+        addTotalRow('Amount Paid:', total);
+        addTotalRow('Balance Due:', 0);
 
-  addTotalRow('Subtotal:', subtotal);
-  addTotalRow('Tax (0%):', tax);
-  addTotalRow('Shipping:', shipping);
-  addTotalRow('Total:', total, true);
-  addTotalRow('Amount Paid:', total);
-  addTotalRow('Balance Due:', 0);
+        doc.moveTo(40, 700).lineTo(555, 700).strokeColor('#CCCCCC').stroke();
+        doc.fontSize(8).fillColor(gray)
+          .text('Thank you for your business!', 40, 710)
+          .text('Crafted Charm | Hubli, Karnataka', 40, 725)
+          .text('Phone: +91 8217719225 | Email: craftedcharm.luck@gmail.com', 40, 740)
+          .text(`Invoice generated on ${new Date().toLocaleString('en-IN')}`, 400, 740, { align: 'right' });
 
-  // Footer
-  doc.moveTo(40, 700).lineTo(555, 700).strokeColor('#CCCCCC').stroke();
-  doc.fontSize(8).fillColor(gray)
-    .text('Thank you for your business!', 40, 710)
-    .text('Crafted Charm | Hubli, Karnataka', 40, 725)
-    .text('Phone: +91 8217719225 | Email: craftedcharm.luck@gmail.com', 40, 740)
-    .text(`Invoice generated on ${new Date().toLocaleString('en-IN')}`, 400, 740, { align: 'right' });
+        doc.end();
+        return await getStream.buffer(doc);
+      }
 
-  doc.end();
-  return await getStream.buffer(doc); // Return buffer for email attachment
-}
+      const pdfBuffer = await generateInvoicePDF(order, orderData);
+      try {
   await transporter.sendMail({
   from: process.env.EMAIL,
   to: orderData.address.email,
@@ -370,6 +353,9 @@ async function generateInvoicePDF(order, orderData) {
     }
   ]
 });
+ } catch (e) {
+        console.error("❌ Failed to send email:", e);
+      }
 
       delete tempBookingStore[merchantOrderId];
       return res.redirect(`${baseUrl}/order?id=${newOrder._id}`);
